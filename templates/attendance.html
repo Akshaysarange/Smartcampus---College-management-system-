@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SmartCampus | Take Attendance</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/all.min.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/teacher/attendance.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="header-logo">
+
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        >
+
+    </div>
+
+    <div>
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+
+</div>
+
+
+<div class="layout">
+
+    <div class="sidebar">
+
+        <a href="{{ url_for('teacher_find') }}">
+            <i class="fa-solid fa-users"></i>
+            <span>Find Students</span>
+        </a>
+
+        <a
+            href="{{ url_for('teacher_attendance') }}"
+            class="active"
+        >
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}">
+            <i class="fa-solid fa-square-poll-vertical"></i>
+            <span>Result Upload</span>
+        </a>
+
+        <a href="{{ url_for('teacher_defaulter') }}">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Defaulter List</span>
+        </a>
+
+        <a href="{{ url_for('teacher_profile') }}">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="{{ url_for('teacher_change_password') }}">
+            <i class="fa-solid fa-lock"></i>
+            <span>Change Password</span>
+        </a>
+
+        <div class="logout-btn">
+
+            <a href="{{ url_for('logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <main class="main">
+
+        <div class="page-title">
+            Take Attendance
+        </div>
+
+
+        <section class="teacher-card">
+
+            <h2>
+                {{ teacher_name }}
+            </h2>
+
+            <p>
+                {{ department }} Department
+            </p>
+
+        </section>
+
+
+        <!-- Attendance Filters -->
+        <section class="card">
+
+            <div class="card-header">
+                Attendance Details
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="filter-grid">
+
+                    <div class="form-group">
+
+                        <label for="yearSelect">
+                            Year
+                        </label>
+
+                        <select
+                            id="yearSelect"
+                            onchange="loadSubjects()"
+                        >
+                            <option value="">
+                                Select Year
+                            </option>
+
+                            <option value="FY">
+                                FY
+                            </option>
+
+                            <option value="SY">
+                                SY
+                            </option>
+
+                            <option value="TY">
+                                TY
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="subjectSelect">
+                            Subject
+                        </label>
+
+                        <select
+                            id="subjectSelect"
+                            onchange="handleAttendanceSelectionChange()"
+                        >
+                            <option value="">
+                                Select Year First
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="attendanceDate">
+                            Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="attendanceDate"
+                            onchange="loadStudentsForAttendance()"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- OTP Attendance -->
+        <section class="card otp-teacher-card">
+
+            <div class="card-header">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <span>
+                    OTP Attendance Session
+                </span>
+
+            </div>
+
+
+            <div class="card-body otp-teacher-body">
+
+                <div class="otp-teacher-info">
+
+                    <div class="otp-teacher-info-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Generate Attendance OTP
+                        </h3>
+
+                        <p>
+                            Select year and subject, then generate an OTP.
+                            Students must enter this OTP from within the
+                            allowed location radius.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="otp-settings-grid">
+
+                    <div class="form-group">
+
+                        <label for="otpRadius">
+                            Allowed Radius
+                        </label>
+
+                        <select id="otpRadius">
+
+                            <option value="50">
+                                50 metres
+                            </option>
+
+                            <option
+                                value="100"
+                                selected
+                            >
+                                100 metres
+                            </option>
+
+                            <option value="150">
+                                150 metres
+                            </option>
+
+                            <option value="200">
+                                200 metres
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="otp-generate-action">
+
+                        <button
+                            type="button"
+                            class="generate-otp-btn"
+                            id="generateOtpButton"
+                            onclick="generateAttendanceOtp()"
+                        >
+
+                            <i class="fa-solid fa-location-crosshairs"></i>
+
+                            <span>
+                                Generate OTP
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="activeOtpPanel"
+                    class="active-otp-panel"
+                    hidden
+                >
+
+                    <div class="active-otp-details">
+
+                        <div class="active-otp-label">
+                            Current OTP
+                        </div>
+
+                        <div
+                            class="active-otp-code"
+                            id="activeOtpCode"
+                        >
+                            ------
+                        </div>
+
+                        <div
+                            class="active-otp-subject"
+                            id="activeOtpSubject"
+                        ></div>
+
+                        <div class="otp-live-counts">
+
+                            <div class="otp-count-item present-count">
+
+                                <span class="otp-count-label">
+                                    Present
+                                </span>
+
+                                <strong id="otpPresentCount">
+                                    0
+                                </strong>
+
+                            </div>
+
+                            <div class="otp-count-item absent-count">
+
+                                <span class="otp-count-label">
+                                    Absent
+                                </span>
+
+                                <strong id="otpAbsentCount">
+                                    0
+                                </strong>
+
+                            </div>
+
+                            <div class="otp-count-item total-count">
+
+                                <span class="otp-count-label">
+                                    Total
+                                </span>
+
+                                <strong id="otpTotalCount">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <div class="active-otp-timer">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                            <span id="activeOtpTimer">
+                                05:00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="stop-otp-btn"
+                        id="stopOtpButton"
+                        onclick="stopAttendanceOtp()"
+                    >
+
+                        <i class="fa-solid fa-circle-stop"></i>
+
+                        <span>
+                            Stop OTP
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="teacherOtpMessage"
+                    class="otp-teacher-message"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Manual Attendance -->
+        <section class="card">
+
+            <div class="card-header">
+
+                <i class="fa-solid fa-user-check"></i>
+
+                <span>
+                    Manual Attendance
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div id="attendanceTable">
+
+                    <div class="result-empty">
+                        Select year, subject and date to take attendance
+                    </div>
+
+                </div>
+
+
+                <div class="action-row">
+
+                    <button
+                        type="button"
+                        class="submit-btn"
+                        id="submitAttendanceButton"
+                        onclick="submitAttendance()"
+                    >
+
+                        <i class="fa-solid fa-check"></i>
+
+                        <span>
+                            Submit Attendance
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/teacher/attendance.js') }}"></script>
+
+</body>
+</html>
