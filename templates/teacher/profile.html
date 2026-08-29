@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SmartCampus | Teacher Profile</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/all.min.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/teacher/profile.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="header-logo">
+
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        >
+
+    </div>
+
+    <div class="header-content">
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+
+</div>
+
+
+<div class="layout">
+
+    <div class="sidebar">
+
+        <a href="{{ url_for('teacher_find') }}">
+            <i class="fa-solid fa-users"></i>
+            <span>Find Students</span>
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}">
+            <i class="fa-solid fa-square-poll-vertical"></i>
+            <span>Result Upload</span>
+        </a>
+
+        <a href="{{ url_for('teacher_defaulter') }}">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Defaulter List</span>
+        </a>
+
+        <a
+            href="{{ url_for('teacher_profile') }}"
+            class="active"
+        >
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="{{ url_for('teacher_change_password') }}">
+            <i class="fa-solid fa-lock"></i>
+            <span>Change Password</span>
+        </a>
+
+        <div class="logout-btn">
+
+            <a href="{{ url_for('logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <main class="main">
+
+        <div class="page-title">
+            Teacher Profile
+        </div>
+
+
+        <section class="teacher-card">
+
+            <div class="avatar">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            <div class="teacher-card-content">
+
+                <h2>
+                    {{ name }}
+                </h2>
+
+                <p>
+                    {{ department }} Department
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="card">
+
+            <div class="card-header">
+                Account Details
+            </div>
+
+            <div class="card-body">
+
+                <div class="info-row">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <div class="info-label">
+                        Name
+                    </div>
+
+                    <div class="info-value">
+                        {{ name }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <i class="fa-solid fa-at"></i>
+
+                    <div class="info-label">
+                        Username
+                    </div>
+
+                    <div class="info-value">
+                        {{ username }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <div class="info-label">
+                        Password
+                    </div>
+
+                    <div class="info-value">
+                        {{ password }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    <div class="info-label">
+                        Phone No.
+                    </div>
+
+                    <div class="info-value">
+                        {{ phone if phone else 'Not Available' }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <i class="fa-solid fa-building-columns"></i>
+
+                    <div class="info-label">
+                        Department
+                    </div>
+
+                    <div class="info-value">
+                        {{ department }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

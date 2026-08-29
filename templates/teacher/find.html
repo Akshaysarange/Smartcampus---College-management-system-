@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SmartCampus | Find Students</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/all.min.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/teacher/find.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="header-logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        >
+    </div>
+
+    <div>
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+
+</div>
+
+
+<div class="layout">
+
+    <div class="sidebar">
+
+        <a href="{{ url_for('teacher_find') }}" class="active">
+            <i class="fa-solid fa-users"></i>
+            <span>Find Students</span>
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}">
+            <i class="fa-solid fa-square-poll-vertical"></i>
+            <span>Result Upload</span>
+        </a>
+
+        <a href="{{ url_for('teacher_defaulter') }}">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Defaulter List</span>
+        </a>
+
+        <a href="{{ url_for('teacher_profile') }}">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="{{ url_for('teacher_change_password') }}">
+            <i class="fa-solid fa-lock"></i>
+            <span>Change Password</span>
+        </a>
+
+        <div class="logout-btn">
+
+            <a href="{{ url_for('logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <main class="main">
+
+        <div class="page-title">
+            Student Find
+        </div>
+
+
+        <div class="teacher-card">
+
+            <h2>
+                {{ teacher_name }}
+            </h2>
+
+            <p>
+                {{ department }} Department
+            </p>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="number">
+                    {{ fy_count }}
+                </div>
+
+                <div class="label">
+                    FY Students
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="number">
+                    {{ sy_count }}
+                </div>
+
+                <div class="label">
+                    SY Students
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="number">
+                    {{ ty_count }}
+                </div>
+
+                <div class="label">
+                    TY Students
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <section class="card">
+
+            <div class="card-header">
+            Find Students
+            </div>
+
+            <div class="card-body">
+
+            <div class="form-group">
+
+                <label for="studentSearch">
+                Search Student
+                </label>
+
+                <input
+                type="search"
+                id="studentSearch"
+                placeholder="Search by name, roll no or username..."
+                onkeyup="searchStudents()"
+                autocomplete="off"
+                >
+
+                </div>
+
+                <hr class="divider">
+
+                <div id="studentsContainer">
+
+                    <div class="result-empty">
+                        Start typing to search students
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/teacher/find.js') }}"></script>
+
+</body>
+</html>

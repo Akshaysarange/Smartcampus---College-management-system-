@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SmartCampus | Student Result</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/all.min.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/student/result.css') }}"
+    >
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+
+        <div class="header-logo">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="SmartCampus Logo"
+                class="header-logo-img"
+            >
+
+        </div>
+
+        <div>
+            <h1>SmartCampus</h1>
+            <p>College Management System</p>
+        </div>
+
+    </div>
+
+
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+            <a href="{{ url_for('student_attendance') }}">
+                <i class="fa-solid fa-calendar-check"></i>
+                Attendance
+            </a>
+
+            <a
+                href="{{ url_for('student_result') }}"
+                class="active"
+            >
+                <i class="fa-solid fa-chart-line"></i>
+                Result
+            </a>
+
+            <a href="{{ url_for('student_profile') }}">
+                <i class="fa-solid fa-user"></i>
+                Profile
+            </a>
+
+            <a href="{{ url_for('student_change_password') }}">
+                <i class="fa-solid fa-lock"></i>
+                Change Password
+            </a>
+
+            <div class="logout-btn">
+
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Main Content -->
+        <div class="main">
+
+            <div class="page-title">
+                My Result
+            </div>
+
+
+            <!-- Year Filter -->
+            <div class="filter-card">
+
+                <form
+                    method="GET"
+                    action="{{ url_for('student_result') }}"
+                >
+
+                    <label for="year">
+                        Select Year
+                    </label>
+
+                    <select
+                        name="year"
+                        id="year"
+                        onchange="this.form.submit()"
+                    >
+
+                        <option
+                            value="FY"
+                            {% if selected_year == "FY" %}selected{% endif %}
+                        >
+                            FY
+                        </option>
+
+                        <option
+                            value="SY"
+                            {% if selected_year == "SY" %}selected{% endif %}
+                        >
+                            SY
+                        </option>
+
+                        <option
+                            value="TY"
+                            {% if selected_year == "TY" %}selected{% endif %}
+                        >
+                            TY
+                        </option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+
+            {% if results %}
+
+                <!-- Result Summary -->
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="number">
+                            {{ overall_percent }}%
+                        </div>
+
+                        <div class="label">
+                            Percentage
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="number">
+                            {{ sgpa }}
+                        </div>
+
+                        <div class="label">
+                            SGPA
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="number">
+                            {{ cgpa }}
+                        </div>
+
+                        <div class="label">
+                            CGPA
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="stat-card {% if status == 'PASS' %}pass{% else %}fail{% endif %}"
+                    >
+
+                        <div class="number">
+                            {{ status }}
+                        </div>
+
+                        <div class="label">
+                            Status
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Result Table -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <i class="fa-solid fa-table-list"></i>
+
+                        <span>
+                            {{ selected_year }} Result
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-wrap">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subject</th>
+                                    <th>Internal</th>
+                                    <th>Theory</th>
+                                    <th>Total</th>
+                                    <th>Percent</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for r in results %}
+
+                                    <tr>
+
+                                        <td data-label="#">
+                                            {{ loop.index }}
+                                        </td>
+
+                                        <td data-label="Subject">
+                                            {{ r.subject }}
+                                        </td>
+
+                                        <td data-label="Internal">
+                                            {{ r.internal }}
+                                        </td>
+
+                                        <td data-label="Theory">
+                                            {{ r.theory }}
+                                        </td>
+
+                                        <td data-label="Total">
+                                            {{ r.total }}/{{ r.max }}
+                                        </td>
+
+                                        <td data-label="Percent">
+                                            {{ r.percent }}%
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+            {% else %}
+
+                <!-- Empty Result -->
+                <div class="empty-card">
+
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-file-circle-xmark"></i>
+                    </div>
+
+                    <h2>
+                        Result Not Available
+                    </h2>
+
+                    <p>
+                        No result has been published for
+                        {{ selected_year }} yet.
+                        Please check again later.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

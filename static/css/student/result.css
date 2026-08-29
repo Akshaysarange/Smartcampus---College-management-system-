@@ -1,0 +1,830 @@
+/* =========================================================
+   SmartCampus - Student Result
+   Desktop + Tablet + Mobile Responsive
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: #f3f7ff;
+    color: #0f172a;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   Header
+========================================================= */
+
+.header {
+    width: 100%;
+    min-height: 78px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 14px 28px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 4px 15px
+        rgba(37, 99, 235, 0.25);
+}
+
+.header-logo {
+    flex-shrink: 0;
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.header-logo-img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+}
+
+.header h1 {
+    color: #ffffff;
+
+    font-size: 26px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.header p {
+    margin-top: 2px;
+
+    color: rgba(255, 255, 255, 0.9);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   Layout
+========================================================= */
+
+.layout {
+    min-height: calc(100vh - 78px);
+
+    display: flex;
+}
+
+
+/* =========================================================
+   Sidebar
+========================================================= */
+
+.sidebar {
+    width: 250px;
+    min-height: calc(100vh - 78px);
+
+    display: flex;
+    flex-direction: column;
+
+    padding-top: 22px;
+
+    background: #ffffff;
+
+    box-shadow:
+        4px 0 18px
+        rgba(15, 23, 42, 0.08);
+}
+
+.sidebar a {
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 26px;
+
+    color: #0f172a;
+
+    border-left: 4px solid transparent;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.sidebar a i {
+    flex-shrink: 0;
+
+    width: 18px;
+
+    text-align: center;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #eff6ff;
+    color: #2563eb;
+
+    border-left-color: #2563eb;
+}
+
+.logout-btn {
+    margin-top: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn a {
+    color: #dc2626;
+}
+
+.logout-btn a:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+
+    border-left-color: #dc2626;
+}
+
+
+/* =========================================================
+   Main Content
+========================================================= */
+
+.main {
+    flex: 1;
+    min-width: 0;
+
+    padding: 32px 36px;
+}
+
+.page-title {
+    margin-bottom: 22px;
+
+    color: #0f172a;
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   Shared Cards
+========================================================= */
+
+.filter-card,
+.card,
+.empty-card,
+.stat-card {
+    background: #ffffff;
+
+    border: 1px solid #dbeafe;
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 24px
+        rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   Year Filter
+========================================================= */
+
+.filter-card {
+    margin-bottom: 22px;
+    padding: 20px;
+}
+
+.filter-card form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-card label {
+    color: #334155;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.filter-card select {
+    min-width: 130px;
+    min-height: 44px;
+
+    padding: 10px 16px;
+
+    background: #ffffff;
+    color: #0f172a;
+
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.filter-card select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37, 99, 235, 0.1);
+}
+
+
+/* =========================================================
+   Result Summary Cards
+========================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    min-width: 0;
+
+    padding: 22px;
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(15, 23, 42, 0.1);
+}
+
+.number {
+    color: #2563eb;
+
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.2;
+
+    overflow-wrap: anywhere;
+}
+
+.label {
+    margin-top: 6px;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-card.pass .number {
+    color: #16a34a;
+}
+
+.stat-card.fail .number {
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   Result Card
+========================================================= */
+
+.card {
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 15px 22px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Result Table
+========================================================= */
+
+.table-wrap {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    min-width: 720px;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+}
+
+th,
+td {
+    padding: 15px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    text-align: left;
+}
+
+th {
+    background: #f8fafc;
+    color: #475569;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+td {
+    color: #0f172a;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    vertical-align: middle;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr {
+    transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f8fbff;
+}
+
+
+/* =========================================================
+   Empty Result Card
+========================================================= */
+
+.empty-card {
+    padding: 50px 30px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 15px;
+
+    color: #2563eb;
+
+    font-size: 60px;
+}
+
+.empty-card h2 {
+    margin-bottom: 10px;
+
+    color: #0f172a;
+
+    font-size: 26px;
+}
+
+.empty-card p {
+    max-width: 520px;
+
+    margin: 0 auto;
+
+    color: #64748b;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   Tablet Responsive
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .sidebar a {
+        padding-left: 20px;
+        padding-right: 16px;
+
+        font-size: 14px;
+    }
+
+    .main {
+        padding: 26px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   Small Tablet / Mobile Navigation
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .header {
+        min-height: 70px;
+
+        padding: 12px 16px;
+    }
+
+    .header-logo {
+        width: 44px;
+        height: 44px;
+    }
+
+    .header h1 {
+        font-size: 21px;
+    }
+
+    .header p {
+        font-size: 11px;
+    }
+
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+
+        padding: 10px;
+
+        border-bottom: 1px solid #dbeafe;
+
+        box-shadow:
+            0 4px 14px
+            rgba(15, 23, 42, 0.07);
+    }
+
+    .sidebar a {
+        min-height: 44px;
+
+        justify-content: center;
+
+        padding: 10px 8px;
+
+        background: #f8fbff;
+
+        border: 1px solid #dbeafe;
+        border-left: 1px solid #dbeafe;
+        border-radius: 9px;
+
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background: #eff6ff;
+
+        border-color: #2563eb;
+    }
+
+    .logout-btn {
+        grid-column: 1 / -1;
+
+        margin-top: 0;
+        padding: 0;
+
+        border-top: none;
+    }
+
+    .logout-btn a {
+        background: #fef2f2;
+
+        border-color: #fecaca;
+
+        color: #dc2626;
+    }
+
+    .main {
+        width: 100%;
+
+        padding: 20px;
+    }
+
+    .page-title {
+        margin-bottom: 18px;
+
+        font-size: 24px;
+    }
+
+    .filter-card {
+        padding: 17px;
+    }
+
+    .filter-card form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter-card select {
+        width: 100%;
+    }
+
+    .stats-grid {
+        gap: 14px;
+    }
+
+    .stat-card {
+        padding: 18px;
+    }
+
+    .number {
+        font-size: 24px;
+    }
+
+    .card-header {
+        padding: 13px 16px;
+
+        font-size: 16px;
+    }
+
+    .empty-card {
+        padding: 38px 20px;
+    }
+
+    .empty-icon {
+        font-size: 52px;
+    }
+
+    .empty-card h2 {
+        font-size: 22px;
+    }
+}
+
+
+/* =========================================================
+   Mobile Table Cards
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-wrap {
+        overflow: visible;
+    }
+
+    table {
+        min-width: 0;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        padding: 12px;
+    }
+
+    tbody tr {
+        padding: 8px 14px;
+
+        background: #ffffff;
+
+        border: 1px solid #dbeafe;
+        border-radius: 12px;
+
+        box-shadow:
+            0 3px 12px
+            rgba(15, 23, 42, 0.06);
+    }
+
+    tbody tr:hover {
+        background: #ffffff;
+    }
+
+    td {
+        min-height: 42px;
+
+        display: grid;
+        grid-template-columns:
+            minmax(90px, 0.8fr)
+            minmax(0, 1.2fr);
+        align-items: center;
+        gap: 10px;
+
+        padding: 10px 0;
+
+        border-bottom: 1px solid #e5e7eb;
+
+        text-align: right;
+
+        overflow-wrap: anywhere;
+    }
+
+    td:last-child {
+        border-bottom: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+
+        color: #2563eb;
+
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-align: left;
+        text-transform: uppercase;
+    }
+}
+
+
+/* =========================================================
+   Very Small Mobile
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .header {
+        gap: 10px;
+
+        padding: 11px 13px;
+    }
+
+    .header-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header h1 {
+        font-size: 18px;
+    }
+
+    .header p {
+        font-size: 10px;
+    }
+
+    .sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .main {
+        padding: 14px;
+    }
+
+    .page-title {
+        font-size: 21px;
+    }
+
+    .filter-card {
+        border-radius: 14px;
+    }
+
+    .stat-card {
+        border-radius: 14px;
+    }
+
+    .number {
+        font-size: 22px;
+    }
+
+    .card,
+    .empty-card {
+        border-radius: 14px;
+    }
+
+    tbody {
+        padding: 10px;
+    }
+
+    td {
+        grid-template-columns:
+            minmax(76px, 0.7fr)
+            minmax(0, 1.3fr);
+    }
+
+    .empty-card {
+        padding: 32px 16px;
+    }
+
+    .empty-card h2 {
+        font-size: 20px;
+    }
+
+    .empty-card p {
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   Accessibility
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

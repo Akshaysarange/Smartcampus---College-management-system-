@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>SmartCampus | Manage Teachers</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/all.min.css') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin/teachers.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- =========================
+     Header
+========================= -->
+    <header class="header">
+      <div class="header-logo">
+        <img
+          src="{{ url_for('static', filename='images/logo.png') }}"
+          alt="SmartCampus Logo"
+          class="header-logo-img"
+        />
+      </div>
+
+      <div class="header-content">
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- =========================
+         Sidebar
+    ========================= -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+          <a href="{{ url_for('admin_find') }}"> Find Teacher/Student </a>
+
+          <a
+            href="{{ url_for('admin_teachers') }}"
+            class="active"
+            aria-current="page"
+          >
+            Teacher Add/Remove
+          </a>
+
+          <a href="{{ url_for('admin_students') }}"> Student Add/Remove </a>
+
+          <a href="{{ url_for('admin_profile') }}"> Profile </a>
+
+          <a href="{{ url_for('admin_change_password') }}"> Change Password </a>
+        </nav>
+
+        <div class="logout-btn">
+          <a href="{{ url_for('logout') }}">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+            <span> Logout </span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- =========================
+         Main Content
+    ========================= -->
+      <main class="main">
+        <div class="page-title">Manage Teachers</div>
+
+        <!-- =========================
+             Flash Messages
+        ========================= -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+
+        <div class="flash-messages" aria-live="polite">
+          {% for category, message in messages %}
+
+          <div class="flash-message flash-{{ category }}" role="alert">
+            {{ message }}
+          </div>
+
+          {% endfor %}
+        </div>
+
+        {% endif %} {% endwith %}
+
+        <!-- =========================
+             Teacher Statistics
+        ========================= -->
+        <section class="stats-grid" aria-label="Teacher statistics">
+          <div class="stat-card">
+            <div class="number">{{ total_teachers }}</div>
+
+            <div class="label">Total</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="number">{{ cs_teachers }}</div>
+
+            <div class="label">CS</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="number">{{ it_teachers }}</div>
+
+            <div class="label">IT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="number">{{ dsda_teachers }}</div>
+
+            <div class="label">DSDA</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="number">{{ ai_teachers }}</div>
+
+            <div class="label">AI</div>
+          </div>
+        </section>
+
+        <!-- =========================
+             Add Teacher
+        ========================= -->
+        <section class="card">
+          <div class="card-header">Add Teacher</div>
+
+          <div class="card-body">
+            <form
+              method="POST"
+              action="{{ url_for('admin_teachers_add') }}"
+              id="addTeacherForm"
+              novalidate
+            >
+              <!-- =========================
+                         Teacher Basic Details
+                    ========================= -->
+              <div class="teacher-basic-grid">
+                <div class="form-group">
+                  <label for="teacherName"> Full Name </label>
+
+                  <input
+                    type="text"
+                    id="teacherName"
+                    name="name"
+                    placeholder="Enter teacher name"
+                    autocomplete="name"
+                    minlength="2"
+                    maxlength="100"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="teacherPhone"> Phone Number </label>
+
+                  <input
+                    type="tel"
+                    id="teacherPhone"
+                    name="phone"
+                    placeholder="Enter 10-digit phone number"
+                    autocomplete="tel"
+                    inputmode="numeric"
+                    pattern="[0-9]{10}"
+                    minlength="10"
+                    maxlength="10"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="deptSelectAdd"> Department </label>
+
+                  <select name="dept_id" id="deptSelectAdd" required>
+                    <option value="">Select Department</option>
+
+                    <option value="1">CS</option>
+
+                    <option value="2">IT</option>
+
+                    <option value="3">DSDA</option>
+
+                    <option value="4">AI</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- =========================
+                         Subject Heading
+                    ========================= -->
+              <div class="subject-assignment-title">
+                <div>Assign Subjects</div>
+
+                <small> Select subjects for each year </small>
+              </div>
+
+              <!-- =========================
+                         Subject Checkbox Groups
+                    ========================= -->
+              <div class="teacher-subject-grid">
+                <!-- FY Subjects -->
+                <section
+                  class="year-subject-row"
+                  aria-labelledby="fySubjectsHeading"
+                >
+                  <div class="year-box">FY</div>
+
+                  <div class="year-subject-content">
+                    <div class="year-subject-header">
+                      <div>
+                        <h3 id="fySubjectsHeading">FY Subjects</h3>
+
+                        <p>Select minimum 1 and maximum 6 subjects</p>
+                      </div>
+
+                      <span
+                        class="subject-counter"
+                        id="fySubjectCounter"
+                        aria-live="polite"
+                      >
+                        0/6 Selected
+                      </span>
+                    </div>
+
+                    <div
+                      class="subject-checkbox-grid"
+                      id="fySubjectsContainer"
+                      data-year="FY"
+                    >
+                      <div class="subject-loading-message">
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <span> Select Department First </span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- SY Subjects -->
+                <section
+                  class="year-subject-row"
+                  aria-labelledby="sySubjectsHeading"
+                >
+                  <div class="year-box">SY</div>
+
+                  <div class="year-subject-content">
+                    <div class="year-subject-header">
+                      <div>
+                        <h3 id="sySubjectsHeading">SY Subjects</h3>
+
+                        <p>Select minimum 1 and maximum 6 subjects</p>
+                      </div>
+
+                      <span
+                        class="subject-counter"
+                        id="sySubjectCounter"
+                        aria-live="polite"
+                      >
+                        0/6 Selected
+                      </span>
+                    </div>
+
+                    <div
+                      class="subject-checkbox-grid"
+                      id="sySubjectsContainer"
+                      data-year="SY"
+                    >
+                      <div class="subject-loading-message">
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <span> Select Department First </span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- TY Subjects -->
+                <section
+                  class="year-subject-row"
+                  aria-labelledby="tySubjectsHeading"
+                >
+                  <div class="year-box">TY</div>
+
+                  <div class="year-subject-content">
+                    <div class="year-subject-header">
+                      <div>
+                        <h3 id="tySubjectsHeading">TY Subjects</h3>
+
+                        <p>Select minimum 1 and maximum 6 subjects</p>
+                      </div>
+
+                      <span
+                        class="subject-counter"
+                        id="tySubjectCounter"
+                        aria-live="polite"
+                      >
+                        0/6 Selected
+                      </span>
+                    </div>
+
+                    <div
+                      class="subject-checkbox-grid"
+                      id="tySubjectsContainer"
+                      data-year="TY"
+                    >
+                      <div class="subject-loading-message">
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <span> Select Department First </span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <!-- =========================
+                         Validation Message
+                    ========================= -->
+              <div
+                class="form-error-message"
+                id="teacherFormError"
+                role="alert"
+                aria-live="polite"
+                hidden
+              ></div>
+
+              <!-- =========================
+                         Submit Button
+                    ========================= -->
+              <div class="add-teacher-action">
+                <button type="submit" class="action-btn" id="addTeacherButton">
+                  <i class="fa-solid fa-plus"></i>
+
+                  <span> Add Teacher </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- =========================
+             Remove Teacher
+        ========================= -->
+        <section class="card">
+
+          <div class="card-header">
+            Remove Teacher
+          </div>
+
+          <div class="card-body">
+
+            <div class="form-group">
+
+              <label for="teacherSearch">
+                Search Teacher
+              <label>
+
+              <input
+                type="text"
+                id="teacherSearch"
+                placeholder="Search by name, username or phone..."
+                oninput="searchTeachers()"
+            >
+
+            </div>
+
+            <hr class="divider">
+
+            <div id="teachersListContent">
+
+              <div class="result-empty">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <p>
+                    Start typing to search teachers
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin/teachers.js') }}"></script>
+  </body>
+</html>

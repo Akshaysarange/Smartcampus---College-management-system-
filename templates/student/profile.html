@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartCampus | Student Profile</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/all.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/student/profile.css') }}"
+    />
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-logo">
+        <img
+          src="{{ url_for('static', filename='images/logo.png') }}"
+          alt="SmartCampus Logo"
+          class="header-logo-img"
+        />
+      </div>
+      <div>
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="sidebar">
+        <a href="{{ url_for('student_attendance') }}">
+          <i class="fa-solid fa-calendar-check"></i> Attendance
+        </a>
+
+        <a href="{{ url_for('student_result') }}">
+          <i class="fa-solid fa-chart-line"></i> Result
+        </a>
+
+        <a href="{{ url_for('student_profile') }}" class="active">
+          <i class="fa-solid fa-user"></i> Profile
+        </a>
+
+        <a href="{{ url_for('student_change_password')}}">
+          <i class="fa-solid fa-lock"></i> Change Password
+        </a>
+
+        <div class="logout-btn">
+          <a href="{{ url_for('logout') }}">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="page-title">Student Profile</div>
+
+        <div class="greeting-card">
+          <div class="avatar">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+
+          <div class="greeting-text">
+            <h2>{{ greeting }}, {{ name }}</h2>
+            <p>Welcome back to your dashboard</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Account Details</div>
+
+          <div class="card-body">
+            <div class="info-row">
+              <i class="fa-solid fa-user"></i>
+              <div class="info-label">Name</div>
+              <div class="info-value">{{ name }}</div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-id-card"></i>
+              <div class="info-label">Roll No</div>
+              <div class="info-value">{{ roll_no }}</div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-at"></i>
+              <div class="info-label">Username</div>
+              <div class="info-value">{{ username }}</div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-lock"></i>
+              <div class="info-label">Password</div>
+              <div class="info-value">{{ password }}</div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-phone"></i>
+              <div class="info-label">Phone No.</div>
+              <div class="info-value">
+                {{ phone if phone else 'Not Available' }}
+              </div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-building-columns"></i>
+              <div class="info-label">Department</div>
+              <div class="info-value">{{ department }}</div>
+            </div>
+
+            <div class="info-row">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <div class="info-label">Year</div>
+              <div class="info-value">{{ year }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

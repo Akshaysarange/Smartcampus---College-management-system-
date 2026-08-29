@@ -1,0 +1,1024 @@
+/* =========================================================
+   Global Reset
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: #f5f0ff;
+    color: #333333;
+    font-family:
+        "Segoe UI",
+        Tahoma,
+        Geneva,
+        Verdana,
+        sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+
+/* =========================================================
+   Header
+========================================================= */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    width: 100%;
+    min-height: 74px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 4px 16px
+        rgba(124, 58, 237, 0.28);
+}
+
+.header-logo {
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    border-radius: 11px;
+
+    overflow: hidden;
+}
+
+.header-logo-img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border-radius: 9px;
+}
+
+.header h1 {
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 1px;
+}
+
+.header p {
+    margin-top: 2px;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   Layout
+========================================================= */
+
+.layout {
+    min-height: calc(100vh - 74px);
+
+    display: flex;
+
+    margin-top: 74px;
+}
+
+
+/* =========================================================
+   Sidebar
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 74px;
+    bottom: 0;
+    left: 0;
+    z-index: 900;
+
+    width: 220px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 0;
+
+    background: #ffffff;
+
+    border-right: 2px solid #e9d5ff;
+
+    box-shadow:
+        2px 0 12px
+        rgba(124, 58, 237, 0.08);
+
+    overflow-y: auto;
+}
+
+.sidebar a {
+    display: block;
+
+    padding: 14px 24px;
+
+    color: #666666;
+
+    border-left: 3px solid transparent;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        padding-left 0.2s ease;
+}
+
+.sidebar a:hover {
+    padding-left: 27px;
+
+    background: #f5f0ff;
+    color: #7c3aed;
+
+    border-left-color: #7c3aed;
+}
+
+.sidebar a.active {
+    background: #f5f0ff;
+    color: #7c3aed;
+
+    border-left-color: #7c3aed;
+
+    font-weight: 700;
+}
+
+.sidebar .logout-btn {
+    margin-top: auto;
+    padding-top: 20px;
+
+    border-top: 1px solid #e9d5ff;
+}
+
+.sidebar .logout-btn a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #ef4444;
+}
+
+.sidebar .logout-btn a:hover {
+    background: #fff5f5;
+    color: #dc2626;
+
+    border-left-color: #ef4444;
+}
+
+
+/* =========================================================
+   Main Content
+========================================================= */
+
+.main {
+    width: calc(100% - 220px);
+
+    flex: 1;
+
+    margin-left: 220px;
+    padding: 30px;
+
+    min-width: 0;
+}
+
+.page-title {
+    margin-bottom: 25px;
+
+    color: #7c3aed;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Main Card
+========================================================= */
+
+.card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #e9d5ff;
+    border-radius: 20px;
+
+    box-shadow:
+        0 4px 20px
+        rgba(124, 58, 237, 0.1);
+
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 14px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+
+/* =========================================================
+   Search Box
+========================================================= */
+
+.search-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 520px;
+
+    margin-bottom: 24px;
+}
+
+.search-box i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+
+    transform: translateY(-50%);
+
+    color: #7c3aed;
+
+    font-size: 15px;
+
+    pointer-events: none;
+}
+
+.search-box input {
+    width: 100%;
+    min-height: 46px;
+
+    padding: 12px 16px 12px 43px;
+
+    background: #faf7ff;
+    color: #333333;
+
+    border: 2px solid #e9d5ff;
+    border-radius: 12px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.search-box input::placeholder {
+    color: #aaaaaa;
+}
+
+.search-box input:hover {
+    border-color: #d8b4fe;
+}
+
+.search-box input:focus {
+    background: #ffffff;
+
+    border-color: #7c3aed;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(124, 58, 237, 0.1);
+}
+
+
+/* =========================================================
+   Optional Find Form Section
+========================================================= */
+
+.find-section {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    flex-wrap: wrap;
+
+    margin-bottom: 25px;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #555555;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.radio-option input[type="radio"] {
+    width: 17px;
+    height: 17px;
+
+    accent-color: #7c3aed;
+
+    cursor: pointer;
+}
+
+.form-group {
+    min-width: 180px;
+
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    color: #888888;
+
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.form-group select {
+    width: 100%;
+    min-height: 44px;
+
+    padding: 10px 14px;
+
+    background: #faf7ff;
+    color: #333333;
+
+    border: 2px solid #e9d5ff;
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group select:focus {
+    border-color: #7c3aed;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(124, 58, 237, 0.1);
+}
+
+.find-btn {
+    min-height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    color: #ffffff;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.find-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 20px
+        rgba(124, 58, 237, 0.35);
+}
+
+
+/* =========================================================
+   Divider and Result Heading
+========================================================= */
+
+.divider {
+    margin-bottom: 20px;
+
+    border: none;
+    border-top: 1px solid #e9d5ff;
+}
+
+.result-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    margin-bottom: 18px;
+}
+
+#resultTitle {
+    margin-bottom: 15px;
+
+    color: #7c3aed;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Empty Result
+========================================================= */
+
+.result-empty {
+    min-height: 130px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 20px;
+
+    color: #aaaaaa;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   Result Table
+========================================================= */
+
+.table-wrap {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #eee6ff;
+    border-radius: 12px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    min-width: 950px;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+
+    font-size: 14px;
+}
+
+thead tr {
+    background: #f5f0ff;
+}
+
+th {
+    padding: 13px 16px;
+
+    color: #7c3aed;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-align: left;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+td {
+    padding: 13px 16px;
+
+    color: #555555;
+
+    border-bottom: 1px solid #f0e6ff;
+
+    font-size: 13px;
+
+    vertical-align: top;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr {
+    transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #faf7ff;
+}
+
+
+/* =========================================================
+   Teacher Subjects
+========================================================= */
+
+.teacher-subjects-list {
+    min-width: 210px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.teacher-subject-year {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+
+    padding: 6px 8px;
+
+    background: #f4efff;
+
+    border: 1px solid #e9d5ff;
+    border-radius: 7px;
+
+    color: #555555;
+
+    font-size: 12px;
+    line-height: 1.4;
+
+    white-space: normal;
+}
+
+.teacher-subject-year strong {
+    flex-shrink: 0;
+
+    color: #6d28d9;
+}
+
+.not-applicable {
+    color: #aaaaaa;
+}
+
+
+/* =========================================================
+   Tablet Responsive
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 195px;
+    }
+
+    .main {
+        width: calc(100% - 195px);
+
+        margin-left: 195px;
+        padding: 22px;
+    }
+
+    .sidebar a {
+        padding-left: 18px;
+        padding-right: 14px;
+
+        font-size: 12px;
+    }
+
+    .sidebar a:hover {
+        padding-left: 22px;
+    }
+
+    .card-body {
+        padding: 21px;
+    }
+
+    .find-section {
+        align-items: stretch;
+    }
+
+    .form-group {
+        min-width: 220px;
+    }
+}
+
+
+/* =========================================================
+   Mobile Layout
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .header {
+        position: static;
+
+        min-height: 68px;
+
+        padding: 12px 16px;
+    }
+
+    .header-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header h1 {
+        font-size: 18px;
+    }
+
+    .header p {
+        font-size: 10px;
+    }
+
+    .layout {
+        display: block;
+
+        margin-top: 0;
+    }
+
+    .sidebar {
+        position: static;
+
+        width: 100%;
+
+        display: block;
+
+        padding: 8px;
+
+        border-right: none;
+        border-bottom: 2px solid #e9d5ff;
+
+        box-shadow:
+            0 3px 12px
+            rgba(124, 58, 237, 0.08);
+
+        overflow: visible;
+    }
+
+    .sidebar > a,
+    .sidebar nav {
+        width: 100%;
+    }
+
+    .sidebar a {
+        min-height: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 6px;
+        padding: 9px 8px;
+
+        background: #faf7ff;
+
+        border: 1px solid #eee6ff;
+        border-left: 1px solid #eee6ff;
+        border-radius: 8px;
+
+        font-size: 11px;
+        text-align: center;
+    }
+
+    .sidebar a:hover {
+        padding-left: 8px;
+
+        border-color: #c4b5fd;
+    }
+
+    .sidebar a.active {
+        background: #ede9fe;
+
+        border-color: #7c3aed;
+    }
+
+    .sidebar .logout-btn {
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+
+    .sidebar .logout-btn a {
+        margin-bottom: 0;
+
+        background: #fff5f5;
+
+        border-color: #fecaca;
+    }
+
+    .main {
+        width: 100%;
+
+        margin-left: 0;
+        padding: 17px;
+    }
+
+    .page-title {
+        margin-bottom: 18px;
+
+        font-size: 20px;
+    }
+
+    .card {
+        border-radius: 16px;
+    }
+
+    .card-header {
+        padding: 13px 16px;
+    }
+
+    .card-body {
+        padding: 17px;
+    }
+
+    .search-box {
+        max-width: none;
+    }
+
+    .find-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .form-group {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .find-btn {
+        width: 100%;
+    }
+
+    .radio-group {
+        gap: 14px;
+    }
+
+    .result-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #resultTitle {
+        margin-bottom: 8px;
+    }
+}
+
+
+/* =========================================================
+   Mobile Result Cards
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .table-wrap {
+        overflow: visible;
+
+        border: none;
+        border-radius: 0;
+    }
+
+    table {
+        min-width: 0;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    tbody tr {
+        padding: 8px 14px;
+
+        background: #ffffff;
+
+        border: 1px solid #e9d5ff;
+        border-radius: 12px;
+
+        box-shadow:
+            0 3px 12px
+            rgba(124, 58, 237, 0.07);
+    }
+
+    tbody tr:hover {
+        background: #ffffff;
+    }
+
+    td {
+        min-height: 42px;
+
+        display: grid;
+        grid-template-columns:
+            minmax(95px, 0.8fr)
+            minmax(0, 1.2fr);
+        align-items: start;
+        gap: 10px;
+
+        padding: 10px 0;
+
+        border-bottom: 1px solid #f0e6ff;
+
+        text-align: right;
+
+        overflow-wrap: anywhere;
+    }
+
+    td:last-child {
+        border-bottom: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+
+        color: #7c3aed;
+
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .teacher-subjects-list {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .teacher-subject-year {
+        text-align: left;
+    }
+
+    .result-empty {
+        min-height: 110px;
+
+        padding: 28px 15px;
+    }
+}
+
+
+/* =========================================================
+   Very Small Mobile
+========================================================= */
+
+@media (max-width: 430px) {
+
+    .header {
+        gap: 10px;
+        padding: 11px 13px;
+    }
+
+    .header-logo {
+        width: 38px;
+        height: 38px;
+    }
+
+    .header h1 {
+        font-size: 17px;
+    }
+
+    .main {
+        padding: 13px;
+    }
+
+    .card-body {
+        padding: 14px;
+    }
+
+    .search-box input {
+        min-height: 44px;
+
+        padding-right: 12px;
+
+        font-size: 13px;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    td {
+        grid-template-columns:
+            minmax(78px, 0.7fr)
+            minmax(0, 1.3fr);
+    }
+}
+
+
+/* =========================================================
+   Accessibility
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
