@@ -63,21 +63,21 @@ function loadDefaulters() {
                 html += `
                 <tr>
 
-                <td>${index + 1}</td>
+                <td data-label="#">${index + 1}</td>
 
-                <td>${student.name}</td>
+                <td data-label="Student Name">${student.name}</td>
 
-                <td>${student.year}</td>
+                <td data-label="Year">${student.year}</td>
 
-                <td>${student.roll}</td>
+                <td data-label="Roll No">${student.roll}</td>
 
-                <td>${student.phone || "N/A"}</td>
+                <td data-label="Phone No.">${student.phone || "N/A"}</td>
 
-                <td class="percent-low">
+                <td data-label="Attendance" class="percent-low">
                     ${student.percent}%
                 </td>
 
-                <td>
+                <td data-label="Status">
                     <span class="badge">
                         Defaulter
                     </span>

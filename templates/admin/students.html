@@ -1,401 +1,141 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends "base_admin.html" %}
+{% set page_js = 'js/admin/students.js' %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block page %}Manage Students{% endblock %}
 
-    <title>SmartCampus | Manage Students</title>
+{% block students_active %}active{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/all.min.css') }}"
-    >
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/students.css') }}">
+{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/admin/students.css') }}"
-    >
-</head>
+{% block main %}
+<div class="page-title">Manage Students</div>
 
-<body>
-
-<header class="header">
-
-    <div class="header-logo">
-
-        <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            alt="SmartCampus Logo"
-            class="header-logo-img"
-        >
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages" aria-live="polite">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}" role="alert">
+        {{ message }}
     </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
-    <div class="header-content">
-        <h1>SmartCampus</h1>
-        <p>College Management System</p>
+<section class="stats-grid" aria-label="Student statistics">
+    <div class="stat-card">
+        <div class="number">{{ total_students }}</div>
+        <div class="label">Total</div>
     </div>
+    <div class="stat-card">
+        <div class="number">{{ cs_students }}</div>
+        <div class="label">CS</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ it_students }}</div>
+        <div class="label">IT</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ dsda_students }}</div>
+        <div class="label">DSDA</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ ai_students }}</div>
+        <div class="label">AI</div>
+    </div>
+</section>
 
-</header>
+<section class="card">
+    <div class="card-header">Add Student</div>
 
-
-<div class="layout">
-
-    <aside class="sidebar">
-
-        <nav
-            class="sidebar-nav"
-            aria-label="Admin navigation"
-        >
-
-            <a href="{{ url_for('admin_find') }}">
-                Find Teacher/Student
-            </a>
-
-            <a href="{{ url_for('admin_teachers') }}">
-                Teacher Add/Remove
-            </a>
-
-            <a
-                href="{{ url_for('admin_students') }}"
-                class="active"
-                aria-current="page"
-            >
-                Student Add/Remove
-            </a>
-
-            <a href="{{ url_for('admin_profile') }}">
-                Profile
-            </a>
-
-            <a href="{{ url_for('admin_change_password') }}">
-                Change Password
-            </a>
-
-        </nav>
-
-
-        <div class="logout-btn">
-
-            <a href="{{ url_for('logout') }}">
-
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
-        </div>
-
-    </aside>
-
-
-    <main class="main">
-
-        <div class="page-title">
-            Manage Students
-        </div>
-
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-
-            {% if messages %}
-
-                <div
-                    class="flash-messages"
-                    aria-live="polite"
-                >
-
-                    {% for category, message in messages %}
-
-                        <div
-                            class="flash-message flash-{{ category }}"
-                            role="alert"
-                        >
-                            {{ message }}
-                        </div>
-
-                    {% endfor %}
-
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.students_add') }}" id="addStudentForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input
+                        type="text"
+                        id="studentName"
+                        name="name"
+                        placeholder="Enter name"
+                        autocomplete="name"
+                        minlength="2"
+                        maxlength="100"
+                        required
+                    >
                 </div>
-
-            {% endif %}
-
-        {% endwith %}
-
-
-        <section
-            class="stats-grid"
-            aria-label="Student statistics"
-        >
-
-            <div class="stat-card">
-                <div class="number">
-                    {{ total_students }}
-                </div>
-
-                <div class="label">
-                    Total
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="number">
-                    {{ cs_students }}
-                </div>
-
-                <div class="label">
-                    CS
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="number">
-                    {{ it_students }}
-                </div>
-
-                <div class="label">
-                    IT
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="number">
-                    {{ dsda_students }}
-                </div>
-
-                <div class="label">
-                    DSDA
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="number">
-                    {{ ai_students }}
-                </div>
-
-                <div class="label">
-                    AI
-                </div>
-            </div>
-
-        </section>
-
-
-        <section class="card">
-
-            <div class="card-header">
-                Add Student
-            </div>
-
-
-            <div class="card-body">
-
-                <form
-                    method="POST"
-                    action="{{ url_for('admin_students_add') }}"
-                    id="addStudentForm"
-                >
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-
-                            <label for="studentName">
-                                Full Name
-                            </label>
-
-                            <input
-                                type="text"
-                                id="studentName"
-                                name="name"
-                                placeholder="Enter name"
-                                autocomplete="name"
-                                minlength="2"
-                                maxlength="100"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="studentPhone">
-                                Phone Number
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="studentPhone"
-                                name="phone"
-                                placeholder="Enter 10-digit phone number"
-                                autocomplete="tel"
-                                inputmode="numeric"
-                                pattern="[0-9]{10}"
-                                minlength="10"
-                                maxlength="10"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="deptSelectAdd">
-                                Department
-                            </label>
-
-                            <select
-                                name="dept_id"
-                                id="deptSelectAdd"
-                                required
-                            >
-
-                                <option value="">
-                                    Select Department
-                                </option>
-
-                                <option value="1">
-                                    CS
-                                </option>
-
-                                <option value="2">
-                                    IT
-                                </option>
-
-                                <option value="3">
-                                    DSDA
-                                </option>
-
-                                <option value="4">
-                                    AI
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="yearSelectAdd">
-                                Year
-                            </label>
-
-                            <select
-                                name="year_id"
-                                id="yearSelectAdd"
-                                required
-                            >
-
-                                <option value="">
-                                    Select Year
-                                </option>
-
-                                <option value="1">
-                                    FY
-                                </option>
-
-                                <option value="2">
-                                    SY
-                                </option>
-
-                                <option value="3">
-                                    TY
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <button
-                            type="submit"
-                            class="action-btn"
-                            id="addStudentButton"
-                        >
-
-                            <i class="fa-solid fa-plus"></i>
-
-                            <span>
-                                Add Student
-                            </span>
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </section>
-
-
-        <section class="card">
-
-            <div class="card-header">
-                Remove Student
-            </div>
-
-            <div class="card-body">
 
                 <div class="form-group">
-
-                    <label for="studentSearch">
-                        Search Student
-                    </label>
-
+                    <label for="studentPhone">Phone Number</label>
                     <input
-                        type="search"
-                        id="studentSearch"
-                        placeholder="Search by name, username, roll no, phone..."
-                        autocomplete="off"
+                        type="tel"
+                        id="studentPhone"
+                        name="phone"
+                        placeholder="Enter 10-digit phone number"
+                        autocomplete="tel"
+                        inputmode="numeric"
+                        pattern="[0-9]{10}"
+                        minlength="10"
+                        maxlength="10"
+                        required
                     >
-
                 </div>
 
-                <hr class="divider">
-
-                <div
-                    id="studentsListContent"
-                    aria-live="polite"
-                >
-
-                    <div class="result-empty">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                        <p>
-                            Start typing to search students
-                        </p>
-
-                    </div>
-
+                <div class="form-group">
+                    <label for="deptSelectAdd">Department</label>
+                    <select name="dept_id" id="deptSelectAdd" required>
+                        <option value="">Select Department</option>
+                        <option value="1">CS</option>
+                        <option value="2">IT</option>
+                        <option value="3">DSDA</option>
+                        <option value="4">AI</option>
+                    </select>
                 </div>
 
+                <div class="form-group">
+                    <label for="yearSelectAdd">Year</label>
+                    <select name="year_id" id="yearSelectAdd" required>
+                        <option value="">Select Year</option>
+                        <option value="1">FY</option>
+                        <option value="2">SY</option>
+                        <option value="3">TY</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="action-btn" id="addStudentButton">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add Student</span>
+                </button>
             </div>
+        </form>
+    </div>
+</section>
 
-        </section>
-                
-    </main>
+<section class="card">
+    <div class="card-header">Remove Student</div>
 
-</div>
+    <div class="card-body">
+        <div class="form-group">
+            <label for="studentSearch">Search Student</label>
+            <input
+                type="search"
+                id="studentSearch"
+                placeholder="Search by name, username, roll no, phone..."
+                autocomplete="off"
+            >
+        </div>
 
+        <hr class="divider">
 
-<script src="{{ url_for('static', filename='js/admin/students.js') }}"></script>
-
-</body>
-</html>
+        <div id="studentsListContent" aria-live="polite">
+            <div class="result-empty">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <p>Start typing to search students</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

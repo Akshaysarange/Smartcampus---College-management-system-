@@ -1,159 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends "base_admin.html" %}
+{% set page_js = 'js/admin/find.js' %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block page %}Find Teacher/Student{% endblock %}
 
-    <title>SmartCampus | Find Teacher/Student</title>
+{% block find_active %}active{% endblock %}
+{% block find_aria_current %}aria-current="page"{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/all.min.css') }}"
-    >
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/find.css') }}">
+{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/admin/find.css') }}"
-    >
-</head>
+{% block main %}
+<div class="page-title">Find Teacher / Student</div>
 
-<body>
+<section class="card">
+    <div class="card-header">Find</div>
 
-<!-- Header -->
-<header class="header">
-
-    <div class="header-logo">
-
-        <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            alt="SmartCampus Logo"
-            class="header-logo-img"
-        >
-
-    </div>
-
-    <div class="header-content">
-        <h1>SmartCampus</h1>
-        <p>College Management System</p>
-    </div>
-
-</header>
-
-
-<div class="layout">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-
-        <nav
-            class="sidebar-nav"
-            aria-label="Admin navigation"
-        >
-
-            <a
-                href="{{ url_for('admin_find') }}"
-                class="active"
-                aria-current="page"
+    <div class="card-body">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search student or teacher..."
+                autocomplete="off"
+                aria-label="Search student or teacher"
             >
-                Find Teacher/Student
-            </a>
-
-            <a href="{{ url_for('admin_teachers') }}">
-                Teacher Add/Remove
-            </a>
-
-            <a href="{{ url_for('admin_students') }}">
-                Student Add/Remove
-            </a>
-
-            <a href="{{ url_for('admin_profile') }}">
-                Profile
-            </a>
-
-            <a href="{{ url_for('admin_change_password') }}">
-                Change Password
-            </a>
-
-        </nav>
-
-
-        <div class="logout-btn">
-
-            <a href="{{ url_for('logout') }}">
-
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
         </div>
 
-    </aside>
-
-
-    <!-- Main Content -->
-    <main class="main">
-
-        <div class="page-title">
-            Find Teacher / Student
+        <div id="resultContent" aria-live="polite">
+            <div class="result-empty">Start typing to search...</div>
         </div>
-
-
-        <section class="card">
-
-            <div class="card-header">
-                Find
-            </div>
-
-
-            <div class="card-body">
-
-                <div class="search-box">
-
-                    <i
-                        class="fa-solid fa-magnifying-glass"
-                        aria-hidden="true"
-                    ></i>
-
-                    <input
-                        type="search"
-                        id="searchInput"
-                        placeholder="Search student or teacher..."
-                        autocomplete="off"
-                        aria-label="Search student or teacher"
-                    >
-
-                </div>
-
-
-                <div
-                    id="resultContent"
-                    aria-live="polite"
-                >
-
-                    <div class="result-empty">
-                        Start typing to search...
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
-
-
-<script src="{{ url_for('static', filename='js/admin/find.js') }}"></script>
-
-</body>
-</html>
+    </div>
+</section>
+{% endblock %}

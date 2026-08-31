@@ -1,133 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartCampus | Defaulter List</title>
+{% extends "base_teacher.html" %}
+{% set page_js = 'js/teacher/defaulter.js' %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/defaulter.css') }}">
-</head>
-<body>
+{% block page %}Defaulter List{% endblock %}
 
-<div class="header">
-    <div class="header-logo">
-            <img
-                src="{{ url_for('static', filename='images/logo.png') }}"
-                alt="SmartCampus Logo"
-                class="header-logo-img"
-            >
-        </div>
+{% block defaulter_active %}active{% endblock %}
 
-    <div>
-        <h1>SmartCampus</h1>
-        <p>College Management System</p>
-    </div>
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/defaulter.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="page-title">Defaulter List</div>
+
+<div class="teacher-card">
+    <h2>{{ teacher_name }}</h2>
+    <p>{{ department }} Department</p>
 </div>
 
-<div class="layout">
+<div class="card">
+    <div class="card-header">Students Below 75% Attendance</div>
 
-    <div class="sidebar">
-
-        <a href="{{ url_for('teacher_find') }}">
-            <i class="fa-solid fa-users"></i>
-            Find Students
-        </a>
-
-        <a href="{{ url_for('teacher_attendance') }}">
-            <i class="fa-solid fa-calendar-check"></i>
-            Attendance
-        </a>
-
-        <a href="{{ url_for('teacher_marks') }}">
-            <i class="fa-solid fa-square-poll-vertical"></i>
-            Result Upload
-        </a>
-
-        <a href="{{ url_for('teacher_defaulter') }}" class="active">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            Defaulter List
-        </a>
-
-        <a href="{{ url_for('teacher_profile') }}">
-            <i class="fa-solid fa-user"></i>
-            Profile
-        </a>
-
-        <a href="{{ url_for('teacher_change_password') }}">
-            <i class="fa-solid fa-lock"></i>
-            Change Password
-        </a>
-
-        <div class="logout-btn">
-            <a href="{{ url_for('logout') }}">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                Logout
-            </a>
-        </div>
-
-    </div>
-
-    <div class="main">
-
-        <div class="page-title">
-            Defaulter List
-        </div>
-
-        <div class="teacher-card">
-            <h2>{{ teacher_name }}</h2>
-            <p>{{ department }} Department</p>
-        </div>
-
-        <div class="card">
-
-            <div class="card-header">
-                Students Below 75% Attendance
+    <div class="card-body">
+        <div class="filter-grid">
+            <div class="form-group">
+                <label>Select Year</label>
+                <select id="yearSelect" onchange="loadDefaulters()">
+                    <option value="">Select Year</option>
+                    <option value="FY">FY</option>
+                    <option value="SY">SY</option>
+                    <option value="TY">TY</option>
+                </select>
             </div>
-
-            <div class="card-body">
-
-                <div class="filter-grid">
-
-                    <div class="form-group">
-
-                        <label>Select Year</label>
-
-                        <select id="yearSelect" onchange="loadDefaulters()">
-
-                            <option value="">Select Year</option>
-
-                            <option value="FY">FY</option>
-
-                            <option value="SY">SY</option>
-
-                            <option value="TY">TY</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div id="defaulterTable">
-
-                    <div class="result-empty">
-
-                        Select Year
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </div>
 
+        <div id="defaulterTable">
+            <div class="result-empty">Select Year</div>
+        </div>
     </div>
-
 </div>
-
-<script src="{{ url_for('static', filename='js/teacher/defaulter.js') }}"></script>
-
-</body>
-</html>
+{% endblock %}

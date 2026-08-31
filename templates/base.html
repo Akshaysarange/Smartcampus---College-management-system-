@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+    <title>{% block title %}SmartCampus{% endblock %}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/all.min.css') }}"
+    />
+
+    {% block styles %}{% endblock %}
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+    <script>
+      (function () {
+        var token = document.querySelector('meta[name="csrf-token"]');
+        if (!token) return;
+        var t = token.content;
+        var orig = window.fetch;
+        window.fetch = function (url, opts) {
+          opts = opts || {};
+          opts.headers = opts.headers || {};
+          if (opts.headers instanceof Headers) {
+            opts.headers.set('X-CSRFToken', t);
+          } else {
+            opts.headers['X-CSRFToken'] = t;
+          }
+          return orig(url, opts);
+        };
+      })();
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

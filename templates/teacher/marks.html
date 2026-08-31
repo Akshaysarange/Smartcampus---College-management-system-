@@ -1,223 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends "base_teacher.html" %}
+{% set page_js = 'js/teacher/marks.js' %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block page %}Result Upload{% endblock %}
 
-    <title>SmartCampus | Result Upload</title>
+{% block marks_active %}active{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/all.min.css') }}"
-    >
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/marks.css') }}">
+{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/teacher/marks.css') }}"
-    >
-</head>
+{% block main %}
+<div class="page-title">Result Upload</div>
 
-<body>
+<section class="teacher-card">
+    <h2>{{ teacher_name }}</h2>
+    <p>{{ department }} Department</p>
+</section>
 
-<div class="header">
+<section class="card">
+    <div class="card-header">Marks Details</div>
 
-    <div class="header-logo">
-
-        <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            alt="SmartCampus Logo"
-            class="header-logo-img"
-        >
-
-    </div>
-
-    <div class="header-content">
-        <h1>SmartCampus</h1>
-        <p>College Management System</p>
-    </div>
-
-</div>
-
-
-<div class="layout">
-
-    <div class="sidebar">
-
-        <a href="{{ url_for('teacher_find') }}">
-            <i class="fa-solid fa-users"></i>
-            <span>Find Students</span>
-        </a>
-
-        <a href="{{ url_for('teacher_attendance') }}">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span>Attendance</span>
-        </a>
-
-        <a
-            href="{{ url_for('teacher_marks') }}"
-            class="active"
-        >
-            <i class="fa-solid fa-square-poll-vertical"></i>
-            <span>Result Upload</span>
-        </a>
-
-        <a href="{{ url_for('teacher_defaulter') }}">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <span>Defaulter List</span>
-        </a>
-
-        <a href="{{ url_for('teacher_profile') }}">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-        </a>
-
-        <a href="{{ url_for('teacher_change_password') }}">
-            <i class="fa-solid fa-lock"></i>
-            <span>Change Password</span>
-        </a>
-
-        <div class="logout-btn">
-
-            <a href="{{ url_for('logout') }}">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <main class="main">
-
-        <div class="page-title">
-            Result Upload
-        </div>
-
-
-        <section class="teacher-card">
-
-            <h2>
-                {{ teacher_name }}
-            </h2>
-
-            <p>
-                {{ department }} Department
-            </p>
-
-        </section>
-
-
-        <section class="card">
-
-            <div class="card-header">
-                Marks Details
+    <div class="card-body">
+        <div class="filter-grid">
+            <div class="form-group">
+                <label for="yearSelect">Year</label>
+                <select id="yearSelect" onchange="loadMarksSubjects()">
+                    <option value="">Select Year</option>
+                    <option value="FY">FY</option>
+                    <option value="SY">SY</option>
+                    <option value="TY">TY</option>
+                </select>
             </div>
 
-
-            <div class="card-body">
-
-                <div class="filter-grid">
-
-                    <div class="form-group">
-
-                        <label for="yearSelect">
-                            Year
-                        </label>
-
-                        <select
-                            id="yearSelect"
-                            onchange="loadMarksSubjects()"
-                        >
-
-                            <option value="">
-                                Select Year
-                            </option>
-
-                            <option value="FY">
-                                FY
-                            </option>
-
-                            <option value="SY">
-                                SY
-                            </option>
-
-                            <option value="TY">
-                                TY
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="subjectSelect">
-                            Subject
-                        </label>
-
-                        <select
-                            id="subjectSelect"
-                            onchange="loadMarksStudents()"
-                        >
-
-                            <option value="">
-                                Select Year First
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="marksTable"
-                    aria-live="polite"
-                >
-
-                    <div class="result-empty">
-                        Select year and subject to upload marks
-                    </div>
-
-                </div>
-
-
-                <div class="action-row">
-
-                    <button
-                        type="button"
-                        class="submit-btn"
-                        id="submitMarksButton"
-                        onclick="submitMarks()"
-                    >
-
-                        <i class="fa-solid fa-check"></i>
-
-                        <span>
-                            Submit Marks
-                        </span>
-
-                    </button>
-
-                </div>
-
+            <div class="form-group">
+                <label for="subjectSelect">Subject</label>
+                <select id="subjectSelect" onchange="loadMarksStudents()">
+                    <option value="">Select Year First</option>
+                </select>
             </div>
+        </div>
 
-        </section>
+        <div id="marksTable" aria-live="polite">
+            <div class="result-empty">Select year and subject to upload marks</div>
+        </div>
 
-    </main>
-
-</div>
-
-
-<script src="{{ url_for('static', filename='js/teacher/marks.js') }}"></script>
-
-</body>
-</html>
+        <div class="action-row">
+            <button type="button" class="submit-btn" id="submitMarksButton" onclick="submitMarks()">
+                <i class="fa-solid fa-check"></i>
+                <span>Submit Marks</span>
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -11,3 +11,9 @@ Flask-MySQLdb
 
 # Read and generate Excel attendance workbooks
 openpyxl
+
+# Load configuration from a .env file
+python-dotenv
+
+# CSRF protection for forms and AJAX
+Flask-WTF

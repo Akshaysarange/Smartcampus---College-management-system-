@@ -529,9 +529,7 @@ tbody tr:hover {
         width: 100%;
         min-height: auto;
 
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
+        display: block;
 
         padding: 10px;
 
@@ -540,6 +538,12 @@ tbody tr:hover {
         box-shadow:
             0 4px 14px
             rgba(15, 23, 42, 0.07);
+    }
+
+    .sidebar-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
     }
 
     .sidebar a {
@@ -759,7 +763,7 @@ tbody tr:hover {
         font-size: 10px;
     }
 
-    .sidebar {
+    .sidebar-nav {
         grid-template-columns: 1fr;
     }
 

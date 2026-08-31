@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCampus | {% block page %}{% endblock %}{% endblock %}
+
+{% block content %}
+<header class="header">
+    <div class="header-logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        >
+    </div>
+
+    <div class="header-content">
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <nav class="sidebar-nav" aria-label="Student navigation">
+            <a
+                href="{{ url_for('student.attendance') }}"
+                class="{% block attendance_active %}{% endblock %}"
+            >
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+
+            <a
+                href="{{ url_for('student.result') }}"
+                class="{% block result_active %}{% endblock %}"
+            >
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Result</span>
+            </a>
+
+            <a
+                href="{{ url_for('student.profile') }}"
+                class="{% block profile_active %}{% endblock %}"
+            >
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+
+            <a
+                href="{{ url_for('student.change_password') }}"
+                class="{% block password_active %}{% endblock %}"
+            >
+                <i class="fa-solid fa-lock"></i>
+                <span>Change Password</span>
+            </a>
+        </nav>
+
+        <div class="logout-btn">
+            <a href="{{ url_for('auth.logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+        {% block main %}{% endblock %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if page_js is defined and page_js %}
+<script src="{{ url_for('static', filename=page_js) }}"></script>
+{% endif %}
+{% endblock %}

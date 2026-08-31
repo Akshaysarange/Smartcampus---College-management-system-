@@ -1,103 +1,93 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SmartCampus | Login</title>
+{% extends "base.html" %}
 
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/all.min.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/login.css') }}"
-    />
-  </head>
-  <body>
-    <div class="top-header">
-      <div class="header-logo">
+{% block title %}SmartCampus | Login{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="header-logo">
         <img
-          src="{{ url_for('static', filename='images/logo.png') }}"
-          alt="SmartCampus Logo"
-          class="header-logo-img"
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
         />
-      </div>
-      <div class="header-title">
+    </div>
+    <div class="header-title">
         <h1>SmartCampus</h1>
         <p>College Management System</p>
-      </div>
     </div>
+</div>
 
-    <div class="main-content">
-      <div class="login-box">
+<div class="main-content">
+    <div class="login-box">
         <div class="login-box-header">
-          <h2>Login</h2>
+            <h2>Login</h2>
         </div>
 
         <div class="login-box-body">
-          {% if error %}
-          <div class="error-box">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <span>{{ error }}</span>
-          </div>
-          {% endif %}
-
-          <form
-            method="POST"
-            action="{{ url_for('login') }}"
-            id="loginForm"
-            onsubmit="return validateForm();"
-          >
-            <div class="input-group">
-              <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder=" "
-                autocomplete="username"
-                required
-              />
-              <label for="username">Username</label>
+            {% if error %}
+            <div class="error-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{{ error }}</span>
             </div>
+            {% endif %}
 
-            <div class="input-group password-group">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder=" "
-                autocomplete="current-password"
-                required
-              />
-              <label for="password">Password</label>
+            <form
+                method="POST"
+                action="{{ url_for('auth.login') }}"
+                id="loginForm"
+                onsubmit="return validateForm();"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder=" "
+                        autocomplete="username"
+                        required
+                    />
+                    <label for="username">Username</label>
+                </div>
 
-              <button
-                type="button"
-                class="toggle-password"
-                onclick="togglePassword()"
-                aria-label="Show or hide password"
-              >
-                <i class="fa-solid fa-eye" id="eyeOpen"></i>
-                <i
-                  class="fa-solid fa-eye-slash"
-                  id="eyeClosed"
-                  style="display: none"
-                ></i>
-              </button>
-            </div>
+                <div class="input-group password-group">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder=" "
+                        autocomplete="current-password"
+                        required
+                    />
+                    <label for="password">Password</label>
 
-            <button type="submit" class="login-btn">
-              <i class="fa-solid fa-right-to-bracket"></i>
-              Login
-            </button>
-          </form>
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick="togglePassword()"
+                        aria-label="Show or hide password"
+                    >
+                        <i class="fa-solid fa-eye" id="eyeOpen"></i>
+                        <i class="fa-solid fa-eye-slash" id="eyeClosed" style="display: none"></i>
+                    </button>
+                </div>
 
-          <div class="footer-text">SmartCampus &copy; 2026</div>
+                <button type="submit" class="login-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Login
+                </button>
+            </form>
+
+            <div class="footer-text">SmartCampus &copy; 2026</div>
         </div>
-      </div>
     </div>
+</div>
+{% endblock %}
 
-    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
-  </body>
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
