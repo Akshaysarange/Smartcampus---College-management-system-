@@ -1,1 +1,13 @@
-hiiiii
+# SmartCampus College Management System
+# A Flask web application for Admin, Teacher, and Student portals.
+# Features include authentication, attendance, marks/results, profiles,
+# MySQL data storage, and Excel attendance report generation.
+
+# Web framework
+Flask
+
+# MySQL integration for Flask
+Flask-MySQLdb
+
+# Read and generate Excel attendance workbooks
+openpyxl
