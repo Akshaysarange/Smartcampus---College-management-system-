@@ -155,6 +155,7 @@ CREATE TABLE teacher_subjects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     teacher_id INT,
     subject_id INT,
+    UNIQUE KEY unique_teacher_subject (teacher_id, subject_id),
     FOREIGN KEY (teacher_id) REFERENCES teachers(id),
     FOREIGN KEY (subject_id) REFERENCES subjects(id)
 );
@@ -402,6 +403,7 @@ CREATE TABLE attendance (
     subject_id INT,
     date DATE NOT NULL,
     status ENUM('P', 'A', 'L') NOT NULL,
+    UNIQUE KEY unique_attendance (student_id, subject_id, date),
     FOREIGN KEY (student_id) REFERENCES students(id),
     FOREIGN KEY (subject_id) REFERENCES subjects(id)
 );
@@ -446,6 +448,7 @@ CREATE TABLE marks (
     theory_marks INT DEFAULT 0,
     total_marks INT DEFAULT 100,
     year_name ENUM('FY','SY','TY') NOT NULL,
+    UNIQUE KEY unique_marks (student_id, subject_id),
     FOREIGN KEY (student_id) REFERENCES students(id),
     FOREIGN KEY (subject_id) REFERENCES subjects(id)
 );
@@ -466,37 +469,6 @@ INSERT INTO marks (student_id, subject_id, internal_marks, theory_marks, total_m
 (11, 10, 23, 54, 100, 'SY'),
 (11, 11, 24, 52, 100, 'SY'),
 (11, 12, 22, 53, 100, 'SY');
-
-ALTER TABLE attendance ADD UNIQUE KEY unique_attendance(student_id,subject_id,date);
-
-ALTER TABLE marks ADD UNIQUE KEY unique_marks (student_id, subject_id);
-
-UPDATE marks
-SET internal_marks=27, theory_marks=58, total_marks=85
-WHERE student_id=11 AND subject_id=13;
-
-UPDATE marks
-SET internal_marks=26, theory_marks=60, total_marks=86
-WHERE student_id=11 AND subject_id=14;
-
-UPDATE marks
-SET internal_marks=28, theory_marks=61, total_marks=89
-WHERE student_id=11 AND subject_id=15;
-
-UPDATE marks
-SET internal_marks=25, theory_marks=57, total_marks=82
-WHERE student_id=11 AND subject_id=16;
-
-UPDATE marks
-SET internal_marks=24, theory_marks=56, total_marks=80
-WHERE student_id=11 AND subject_id=17;
-
-UPDATE marks
-SET internal_marks=29, theory_marks=63, total_marks=92
-WHERE student_id=11 AND subject_id=18;
-
-UPDATE marks SET year_name='TY'
-WHERE student_id=11 AND subject_id BETWEEN 13 AND 18;
 
 -- =========================================================
 -- TEACHER ASSIGNMENT VERIFICATION
@@ -539,10 +511,6 @@ JOIN departments d ON d.id = t.dept_id
 LEFT JOIN teacher_subjects ts ON ts.teacher_id = t.id
 GROUP BY d.id, t.id
 ORDER BY d.id, t.id;
-
-ALTER TABLE teacher_subjects
-ADD CONSTRAINT unique_teacher_subject
-UNIQUE (teacher_id, subject_id);
 
 CREATE TABLE attendance_otp_sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
