@@ -44,16 +44,16 @@ class Student:
         )
 
     @staticmethod
-    def count_next_roll(dept_id, year_id):
+    def next_roll(dept_id, year_id):
         row = db.query_one(
             """
-            SELECT COUNT(*) AS count
+            SELECT COALESCE(MAX(CAST(roll_no AS UNSIGNED)), 0) AS max_roll
             FROM students
             WHERE dept_id = %s AND year_id = %s
             """,
             (dept_id, year_id),
         )
-        return row["count"] + 1
+        return row["max_roll"] + 1
 
     @staticmethod
     def create(user_id, name, username, roll_no, dept_id, year_id):

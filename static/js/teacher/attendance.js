@@ -635,25 +635,20 @@ function generateAttendanceOtp() {
         "subjectSelect"
     );
 
-    const radiusSelect = document.getElementById(
-        "otpRadius"
-    );
-
     const generateButton = document.getElementById(
         "generateOtpButton"
     );
 
     if (
         !yearSelect ||
-        !subjectSelect ||
-        !radiusSelect
+        !subjectSelect
     ) {
         return;
     }
 
     const year = yearSelect.value;
     const subjectId = subjectSelect.value;
-    const allowedRadius = radiusSelect.value;
+    const allowedRadius = 50;
 
     if (!year) {
         showTeacherOtpMessage(

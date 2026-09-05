@@ -14,9 +14,6 @@ from app.models import Student, Subject, Teacher, User, helpers
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
-DEPT_CODES = {"1": "CS", "2": "IT", "3": "DSDA", "4": "AI"}
-YEAR_CODES = {"1": "FY", "2": "SY", "3": "TY"}
-
 
 @admin_bp.route("/find")
 @login_required
@@ -435,10 +432,8 @@ def students_add():
 
     username = helpers.next_username("student", 2000001)
 
-    next_roll = Student.count_next_roll(dept_id, year_id)
-    roll_no = (
-        f"{DEPT_CODES[dept_id]}-{YEAR_CODES[year_id]}-{next_roll:03d}"
-    )
+    next_roll = Student.next_roll(dept_id, year_id)
+    roll_no = str(next_roll)
 
     try:
         user_id = User.create(username, "student", "student", phone)

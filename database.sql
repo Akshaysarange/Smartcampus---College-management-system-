@@ -235,9 +235,10 @@ CREATE TABLE students (
     user_id INT,
     name VARCHAR(100) NOT NULL,
     username VARCHAR(100) NOT NULL UNIQUE,
-    roll_no VARCHAR(20) NOT NULL UNIQUE,
+    roll_no VARCHAR(20) NOT NULL,
     dept_id INT,
     year_id INT,
+    UNIQUE KEY unique_roll (dept_id, year_id, roll_no),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (dept_id) REFERENCES departments(id),
     FOREIGN KEY (year_id) REFERENCES years(id)
@@ -263,23 +264,23 @@ INSERT INTO users (username, password, role, first_login, phone) VALUES
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
-(14, 'Aarav Shah',    '2000001@college.ac.in', 'CS-FY-001', 1, 1),
-(15, 'Bhavna Jain',   '2000002@college.ac.in', 'CS-FY-002', 1, 1),
-(16, 'Chirag Patel',  '2000003@college.ac.in', 'CS-FY-003', 1, 1),
-(17, 'Divya Sharma',  '2000004@college.ac.in', 'CS-FY-004', 1, 1),
-(18, 'Eshan Mehta',   '2000005@college.ac.in', 'CS-FY-005', 1, 1),
+(14, 'Aarav Shah',    '2000001@college.ac.in', '1', 1, 1),
+(15, 'Bhavna Jain',   '2000002@college.ac.in', '2', 1, 1),
+(16, 'Chirag Patel',  '2000003@college.ac.in', '3', 1, 1),
+(17, 'Divya Sharma',  '2000004@college.ac.in', '4', 1, 1),
+(18, 'Eshan Mehta',   '2000005@college.ac.in', '5', 1, 1),
 -- SY
-(19, 'Fatima Khan',   '2000006@college.ac.in', 'CS-SY-001', 1, 2),
-(20, 'Gaurav Verma',  '2000007@college.ac.in', 'CS-SY-002', 1, 2),
-(21, 'Hena Gupta',    '2000008@college.ac.in', 'CS-SY-003', 1, 2),
-(22, 'Ishaan Rao',    '2000009@college.ac.in', 'CS-SY-004', 1, 2),
-(23, 'Jyoti Singh',   '2000010@college.ac.in', 'CS-SY-005', 1, 2),
+(19, 'Fatima Khan',   '2000006@college.ac.in', '1', 1, 2),
+(20, 'Gaurav Verma',  '2000007@college.ac.in', '2', 1, 2),
+(21, 'Hena Gupta',    '2000008@college.ac.in', '3', 1, 2),
+(22, 'Ishaan Rao',    '2000009@college.ac.in', '4', 1, 2),
+(23, 'Jyoti Singh',   '2000010@college.ac.in', '5', 1, 2),
 -- TY
-(24, 'Kabir Malhotra','2000011@college.ac.in', 'CS-TY-001', 1, 3),
-(25, 'Lavanya Nair',  '2000012@college.ac.in', 'CS-TY-002', 1, 3),
-(26, 'Manav Tiwari',  '2000013@college.ac.in', 'CS-TY-003', 1, 3),
-(27, 'Nidhi Desai',   '2000014@college.ac.in', 'CS-TY-004', 1, 3),
-(28, 'Om Mishra',     '2000015@college.ac.in', 'CS-TY-005', 1, 3);
+(24, 'Kabir Malhotra','2000011@college.ac.in', '1', 1, 3),
+(25, 'Lavanya Nair',  '2000012@college.ac.in', '2', 1, 3),
+(26, 'Manav Tiwari',  '2000013@college.ac.in', '3', 1, 3),
+(27, 'Nidhi Desai',   '2000014@college.ac.in', '4', 1, 3),
+(28, 'Om Mishra',     '2000015@college.ac.in', '5', 1, 3);
 
 -- IT STUDENTS (5 per year = 15 total)
 INSERT INTO users (username, password, role, first_login, phone) VALUES
@@ -301,23 +302,23 @@ INSERT INTO users (username, password, role, first_login, phone) VALUES
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
-(29, 'Prachi Kulkarni', '2000016@college.ac.in', 'IT-FY-001', 2, 1),
-(30, 'Qasim Ansari',    '2000017@college.ac.in', 'IT-FY-002', 2, 1),
-(31, 'Riya Bansal',     '2000018@college.ac.in', 'IT-FY-003', 2, 1),
-(32, 'Sahil Saxena',    '2000019@college.ac.in', 'IT-FY-004', 2, 1),
-(33, 'Tanvi Reddy',     '2000020@college.ac.in', 'IT-FY-005', 2, 1),
+(29, 'Prachi Kulkarni', '2000016@college.ac.in', '1', 2, 1),
+(30, 'Qasim Ansari',    '2000017@college.ac.in', '2', 2, 1),
+(31, 'Riya Bansal',     '2000018@college.ac.in', '3', 2, 1),
+(32, 'Sahil Saxena',    '2000019@college.ac.in', '4', 2, 1),
+(33, 'Tanvi Reddy',     '2000020@college.ac.in', '5', 2, 1),
 -- SY
-(34, 'Uday Khanna',     '2000021@college.ac.in', 'IT-SY-001', 2, 2),
-(35, 'Varsha Menon',    '2000022@college.ac.in', 'IT-SY-002', 2, 2),
-(36, 'Waqar Hussain',   '2000023@college.ac.in', 'IT-SY-003', 2, 2),
-(37, 'Xenia DSouza',    '2000024@college.ac.in', 'IT-SY-004', 2, 2),
-(38, 'Yash Chauhan',    '2000025@college.ac.in', 'IT-SY-005', 2, 2),
+(34, 'Uday Khanna',     '2000021@college.ac.in', '1', 2, 2),
+(35, 'Varsha Menon',    '2000022@college.ac.in', '2', 2, 2),
+(36, 'Waqar Hussain',   '2000023@college.ac.in', '3', 2, 2),
+(37, 'Xenia DSouza',    '2000024@college.ac.in', '4', 2, 2),
+(38, 'Yash Chauhan',    '2000025@college.ac.in', '5', 2, 2),
 -- TY
-(39, 'Zara Iyer',       '2000026@college.ac.in', 'IT-TY-001', 2, 3),
-(40, 'Arjun Yadav',     '2000027@college.ac.in', 'IT-TY-002', 2, 3),
-(41, 'Bhumi Bose',      '2000028@college.ac.in', 'IT-TY-003', 2, 3),
-(42, 'Chetan Joshi',    '2000029@college.ac.in', 'IT-TY-004', 2, 3),
-(43, 'Disha Pandey',    '2000030@college.ac.in', 'IT-TY-005', 2, 3);
+(39, 'Zara Iyer',       '2000026@college.ac.in', '1', 2, 3),
+(40, 'Arjun Yadav',     '2000027@college.ac.in', '2', 2, 3),
+(41, 'Bhumi Bose',      '2000028@college.ac.in', '3', 2, 3),
+(42, 'Chetan Joshi',    '2000029@college.ac.in', '4', 2, 3),
+(43, 'Disha Pandey',    '2000030@college.ac.in', '5', 2, 3);
 
 -- DSDA STUDENTS (5 per year = 15 total)
 INSERT INTO users (username, password, role, first_login, phone) VALUES
@@ -339,23 +340,23 @@ INSERT INTO users (username, password, role, first_login, phone) VALUES
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
-(44, 'Ekta Sharma',  '2000031@college.ac.in', 'DSDA-FY-001', 3, 1),
-(45, 'Farhan Malik', '2000032@college.ac.in', 'DSDA-FY-002', 3, 1),
-(46, 'Gauri Tiwari', '2000033@college.ac.in', 'DSDA-FY-003', 3, 1),
-(47, 'Harsh Verma',  '2000034@college.ac.in', 'DSDA-FY-004', 3, 1),
-(48, 'Isha Patel',   '2000035@college.ac.in', 'DSDA-FY-005', 3, 1),
+(44, 'Ekta Sharma',  '2000031@college.ac.in', '1', 3, 1),
+(45, 'Farhan Malik', '2000032@college.ac.in', '2', 3, 1),
+(46, 'Gauri Tiwari', '2000033@college.ac.in', '3', 3, 1),
+(47, 'Harsh Verma',  '2000034@college.ac.in', '4', 3, 1),
+(48, 'Isha Patel',   '2000035@college.ac.in', '5', 3, 1),
 -- SY
-(49, 'Jay Mehta',    '2000036@college.ac.in', 'DSDA-SY-001', 3, 2),
-(50, 'Komal Singh',  '2000037@college.ac.in', 'DSDA-SY-002', 3, 2),
-(51, 'Laksh Gupta',  '2000038@college.ac.in', 'DSDA-SY-003', 3, 2),
-(52, 'Mahi Rao',     '2000039@college.ac.in', 'DSDA-SY-004', 3, 2),
-(53, 'Nikhil Kumar', '2000040@college.ac.in', 'DSDA-SY-005', 3, 2),
+(49, 'Jay Mehta',    '2000036@college.ac.in', '1', 3, 2),
+(50, 'Komal Singh',  '2000037@college.ac.in', '2', 3, 2),
+(51, 'Laksh Gupta',  '2000038@college.ac.in', '3', 3, 2),
+(52, 'Mahi Rao',     '2000039@college.ac.in', '4', 3, 2),
+(53, 'Nikhil Kumar', '2000040@college.ac.in', '5', 3, 2),
 -- TY
-(54, 'Ojas Mehta',   '2000041@college.ac.in', 'DSDA-TY-001', 3, 3),
-(55, 'Pooja Rao',    '2000042@college.ac.in', 'DSDA-TY-002', 3, 3),
-(56, 'Rahul Verma',  '2000043@college.ac.in', 'DSDA-TY-003', 3, 3),
-(57, 'Sneha Joshi',  '2000044@college.ac.in', 'DSDA-TY-004', 3, 3),
-(58, 'Tarun Nair',   '2000045@college.ac.in', 'DSDA-TY-005', 3, 3);
+(54, 'Ojas Mehta',   '2000041@college.ac.in', '1', 3, 3),
+(55, 'Pooja Rao',    '2000042@college.ac.in', '2', 3, 3),
+(56, 'Rahul Verma',  '2000043@college.ac.in', '3', 3, 3),
+(57, 'Sneha Joshi',  '2000044@college.ac.in', '4', 3, 3),
+(58, 'Tarun Nair',   '2000045@college.ac.in', '5', 3, 3);
 
 -- AI STUDENTS (5 per year = 15 total)
 INSERT INTO users (username, password, role, first_login, phone) VALUES
@@ -377,23 +378,23 @@ INSERT INTO users (username, password, role, first_login, phone) VALUES
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
-(59, 'Uma Sharma',    '2000046@college.ac.in', 'AI-FY-001', 4, 1),
-(60, 'Varun Patel',   '2000047@college.ac.in', 'AI-FY-002', 4, 1),
-(61, 'Wini DSouza',   '2000048@college.ac.in', 'AI-FY-003', 4, 1),
-(62, 'Xerxes Irani',  '2000049@college.ac.in', 'AI-FY-004', 4, 1),
-(63, 'Yamini Reddy',  '2000050@college.ac.in', 'AI-FY-005', 4, 1),
+(59, 'Uma Sharma',    '2000046@college.ac.in', '1', 4, 1),
+(60, 'Varun Patel',   '2000047@college.ac.in', '2', 4, 1),
+(61, 'Wini DSouza',   '2000048@college.ac.in', '3', 4, 1),
+(62, 'Xerxes Irani',  '2000049@college.ac.in', '4', 4, 1),
+(63, 'Yamini Reddy',  '2000050@college.ac.in', '5', 4, 1),
 -- SY
-(64, 'Zaid Khan',     '2000051@college.ac.in', 'AI-SY-001', 4, 2),
-(65, 'Aisha Menon',   '2000052@college.ac.in', 'AI-SY-002', 4, 2),
-(66, 'Bharat Kumar',  '2000053@college.ac.in', 'AI-SY-003', 4, 2),
-(67, 'Chhavi Gupta',  '2000054@college.ac.in', 'AI-SY-004', 4, 2),
-(68, 'Dhruv Bansal',  '2000055@college.ac.in', 'AI-SY-005', 4, 2),
+(64, 'Zaid Khan',     '2000051@college.ac.in', '1', 4, 2),
+(65, 'Aisha Menon',   '2000052@college.ac.in', '2', 4, 2),
+(66, 'Bharat Kumar',  '2000053@college.ac.in', '3', 4, 2),
+(67, 'Chhavi Gupta',  '2000054@college.ac.in', '4', 4, 2),
+(68, 'Dhruv Bansal',  '2000055@college.ac.in', '5', 4, 2),
 -- TY
-(69, 'Elan Saxena',   '2000056@college.ac.in', 'AI-TY-001', 4, 3),
-(70, 'Falak Ansari',  '2000057@college.ac.in', 'AI-TY-002', 4, 3),
-(71, 'Girish Rao',    '2000058@college.ac.in', 'AI-TY-003', 4, 3),
-(72, 'Hina Tiwari',   '2000059@college.ac.in', 'AI-TY-004', 4, 3),
-(73, 'Ishan Verma',   '2000060@college.ac.in', 'AI-TY-005', 4, 3);
+(69, 'Elan Saxena',   '2000056@college.ac.in', '1', 4, 3),
+(70, 'Falak Ansari',  '2000057@college.ac.in', '2', 4, 3),
+(71, 'Girish Rao',    '2000058@college.ac.in', '3', 4, 3),
+(72, 'Hina Tiwari',   '2000059@college.ac.in', '4', 4, 3),
+(73, 'Ishan Verma',   '2000060@college.ac.in', '5', 4, 3);
 
 
 -- ATTENDANCE
