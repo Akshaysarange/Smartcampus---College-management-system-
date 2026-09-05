@@ -15,6 +15,14 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
+function getCsrfToken() {
+    const meta = document.querySelector(
+        'meta[name="csrf-token"]'
+    );
+
+    return meta ? meta.content : "";
+}
+
 function showStudentListMessage(message) {
     const content = document.getElementById(
         "studentsListContent"
@@ -117,6 +125,12 @@ function createStudentsTable(students) {
                         action="/admin/students/remove"
                         class="remove-student-form"
                     >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="${getCsrfToken()}"
+                        >
+
                         <input
                             type="hidden"
                             name="student_id"

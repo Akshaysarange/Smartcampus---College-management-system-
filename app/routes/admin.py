@@ -37,7 +37,6 @@ def find_data(type_name, dept_name, year_name):
                     "name": r["name"],
                     "phone": r["phone"] or "",
                     "username": r["username"],
-                    "password": r["password"],
                 }
                 for r in rows
             ]
@@ -50,7 +49,6 @@ def find_data(type_name, dept_name, year_name):
                 "name": s["name"],
                 "roll": s["roll_no"],
                 "username": s["username"],
-                "password": _password_for(s["username"]),
             }
             for s in students
         ]
@@ -67,7 +65,7 @@ def search(keyword):
         """
         SELECT 'Student' AS record_type, st.name, d.name AS department,
                y.name AS year_name, st.roll_no, st.username, u.phone,
-               u.password, '' AS fy_subjects, '' AS sy_subjects,
+               '' AS fy_subjects, '' AS sy_subjects,
                '' AS ty_subjects
         FROM students st
         JOIN users u ON u.id = st.user_id
@@ -83,7 +81,6 @@ def search(keyword):
         """
         SELECT 'Teacher' AS record_type, t.name, d.name AS department,
                '-' AS year_name, '-' AS roll_no, t.username, u.phone,
-               u.password,
                GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 1 THEN s.name END
                    ORDER BY s.name SEPARATOR ', ') AS fy_subjects,
                GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 2 THEN s.name END
@@ -97,7 +94,7 @@ def search(keyword):
         LEFT JOIN subjects s ON s.id = ts.subject_id
         WHERE t.name LIKE %s OR t.username LIKE %s OR u.phone LIKE %s
            OR s.name LIKE %s
-        GROUP BY t.id, t.name, d.name, t.username, u.phone, u.password
+        GROUP BY t.id, t.name, d.name, t.username, u.phone
         ORDER BY t.id
         """,
         (key, key, key, key),
@@ -114,7 +111,6 @@ def search(keyword):
                 "roll": row["roll_no"],
                 "username": row["username"],
                 "phone": row["phone"],
-                "password": row["password"],
                 "fy_subjects": row["fy_subjects"] or "",
                 "sy_subjects": row["sy_subjects"] or "",
                 "ty_subjects": row["ty_subjects"] or "",
@@ -135,7 +131,7 @@ def teachers_search(keyword):
     search_value = f"%{keyword}%"
     rows = _query(
         """
-        SELECT t.id, t.name, t.username, u.password, u.phone, d.name AS department,
+        SELECT t.id, t.name, t.username, u.phone, d.name AS department,
             GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 1 THEN s.name END
                 ORDER BY s.id SEPARATOR ', ') AS fy_subjects,
             GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 2 THEN s.name END
@@ -149,7 +145,7 @@ def teachers_search(keyword):
         LEFT JOIN subjects s ON s.id = ts.subject_id
         WHERE t.name LIKE %s OR t.username LIKE %s OR u.phone LIKE %s
            OR d.name LIKE %s
-        GROUP BY t.id, t.name, t.username, u.password, u.phone, d.name
+        GROUP BY t.id, t.name, t.username, u.phone, d.name
         ORDER BY t.name ASC
         """,
         (search_value, search_value, search_value, search_value),
@@ -160,7 +156,6 @@ def teachers_search(keyword):
                 "id": r["id"],
                 "name": r["name"],
                 "username": r["username"],
-                "password": r["password"],
                 "phone": r["phone"] or "",
                 "department": r["department"] or "",
                 "fy_subjects": r["fy_subjects"] or "",
@@ -378,7 +373,7 @@ def teachers_remove():
 def teachers_list(dept_name):
     rows = _query(
         """
-        SELECT t.id, t.name, t.username, u.password,
+        SELECT t.id, t.name, t.username,
             GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 1 THEN s.name END
                 ORDER BY s.id SEPARATOR ', ') AS fy_subjects,
             GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 2 THEN s.name END
@@ -391,7 +386,7 @@ def teachers_list(dept_name):
         LEFT JOIN teacher_subjects ts ON ts.teacher_id = t.id
         LEFT JOIN subjects s ON s.id = ts.subject_id
         WHERE d.name = %s
-        GROUP BY t.id, t.name, t.username, u.password
+        GROUP BY t.id, t.name, t.username
         ORDER BY t.id ASC
         """,
         (dept_name,),
@@ -402,7 +397,6 @@ def teachers_list(dept_name):
                 "id": r["id"],
                 "name": r["name"],
                 "username": r["username"],
-                "password": r["password"],
                 "fy_subjects": r["fy_subjects"] or "",
                 "sy_subjects": r["sy_subjects"] or "",
                 "ty_subjects": r["ty_subjects"] or "",
@@ -584,14 +578,6 @@ def _commit():
     from app.utils import db
 
     db.commit()
-
-
-def _password_for(username):
-    row = _query_one(
-        "SELECT password FROM users WHERE username = %s",
-        (username,),
-    )
-    return row["password"] if row else ""
 
 
 def _validate_subjects(subject_ids, dept_id, year_id, year_name):

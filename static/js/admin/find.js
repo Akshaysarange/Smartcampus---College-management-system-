@@ -52,30 +52,54 @@ function liveSearch() {
                 return;
             }
 
-            let html = `
-                <div class="table-wrap">
-                    <table>
-                        <thead>
+            const hasStudents = data.some(function (item) {
+                return item.type === "Student";
+            });
+            const hasTeachers = data.some(function (item) {
+                return item.type === "Teacher";
+            });
+
+            const showYearRoll = hasStudents;
+            const showSubjects = hasTeachers;
+
+            let headers = `
                             <tr>
                                 <th>Type</th>
                                 <th>Name</th>
                                 <th>Department</th>
+            `;
+
+            if (showYearRoll) {
+                headers += `
                                 <th>Year</th>
                                 <th>Roll No</th>
+                `;
+            }
+
+            if (showSubjects) {
+                headers += `
                                 <th>Subjects</th>
+                `;
+            }
+
+            headers += `
                                 <th>Username</th>
                                 <th>Phone</th>
-                                <th>Password</th>
                             </tr>
+            `;
+
+            let html = `
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            ${headers}
                         </thead>
 
                         <tbody>
             `;
 
             data.forEach(function (item) {
-                let subjects = `
-                    <span class="not-applicable">-</span>
-                `;
+                let subjects = "";
 
                 if (item.type === "Teacher") {
                     subjects = `
@@ -125,7 +149,10 @@ function liveSearch() {
                         <td data-label="Department">
                             ${escapeHtml(item.department || "-")}
                         </td>
+                `;
 
+                if (showYearRoll) {
+                    html += `
                         <td data-label="Year">
                             ${escapeHtml(item.year || "-")}
                         </td>
@@ -133,21 +160,24 @@ function liveSearch() {
                         <td data-label="Roll No">
                             ${escapeHtml(item.roll || "-")}
                         </td>
+                    `;
+                }
 
+                if (showSubjects) {
+                    html += `
                         <td data-label="Subjects">
                             ${subjects}
                         </td>
+                    `;
+                }
 
+                html += `
                         <td data-label="Username">
                             ${escapeHtml(item.username || "-")}
                         </td>
 
                         <td data-label="Phone">
                             ${escapeHtml(item.phone || "N/A")}
-                        </td>
-
-                        <td data-label="Password">
-                            ${escapeHtml(item.password || "-")}
                         </td>
                     </tr>
                 `;

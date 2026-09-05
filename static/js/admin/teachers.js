@@ -15,6 +15,14 @@ function escapeHtml(value) {
     return element.innerHTML;
 }
 
+function getCsrfToken() {
+    const meta = document.querySelector(
+        'meta[name="csrf-token"]'
+    );
+
+    return meta ? meta.content : "";
+}
+
 function showFormError(message) {
     const errorElement = document.getElementById(
         "teacherFormError"
@@ -661,8 +669,8 @@ function createTeacherTable(teachers) {
             teacher.username || "-"
         );
 
-        const teacherPassword = escapeHtml(
-            teacher.password || "-"
+        const teacherDepartment = escapeHtml(
+            teacher.department || "Not Assigned"
         );
 
         const teacherSubjects = `
@@ -701,12 +709,12 @@ function createTeacherTable(teachers) {
                     ${teacherUsername}
                 </td>
 
-                <td data-label="Subjects">
-                    ${teacherSubjects}
+                <td data-label="Department">
+                    ${teacherDepartment}
                 </td>
 
-                <td data-label="Password">
-                    ${teacherPassword}
+                <td data-label="Subjects">
+                    ${teacherSubjects}
                 </td>
 
                 <td data-label="Action">
@@ -716,6 +724,12 @@ function createTeacherTable(teachers) {
                         action="/admin/teachers/remove"
                         class="remove-teacher-form"
                     >
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="${getCsrfToken()}"
+                        >
 
                         <input
                             type="hidden"
@@ -755,8 +769,8 @@ function createTeacherTable(teachers) {
                         <th>#</th>
                         <th>Name</th>
                         <th>Username</th>
+                        <th>Department</th>
                         <th>Subjects</th>
-                        <th>Password</th>
                         <th>Action</th>
                     </tr>
 
