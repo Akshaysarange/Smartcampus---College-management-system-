@@ -102,14 +102,35 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="deptSelectAdd">Department</label>
-                    <select name="dept_id" id="deptSelectAdd" required>
-                        <option value="">Select Department</option>
-                        <option value="1">CS</option>
-                        <option value="2">IT</option>
-                        <option value="3">DSDA</option>
-                        <option value="4">AI</option>
-                    </select>
+                    <label for="deptMultiSelect">Departments</label>
+                    <div class="dept-multi-select" id="deptMultiSelect">
+                        <div class="dept-multi-trigger" id="deptMultiTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="dept-multi-placeholder">Select Departments</span>
+                            <i class="fa-solid fa-chevron-down dept-multi-arrow"></i>
+                        </div>
+                        <div class="dept-multi-dropdown" id="deptMultiDropdown" role="listbox" aria-multiselectable="true">
+                            <label class="dept-multi-option" data-dept-id="1">
+                                <input type="checkbox" value="1" class="dept-checkbox">
+                                <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                <span>CS</span>
+                            </label>
+                            <label class="dept-multi-option" data-dept-id="2">
+                                <input type="checkbox" value="2" class="dept-checkbox">
+                                <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                <span>IT</span>
+                            </label>
+                            <label class="dept-multi-option" data-dept-id="3">
+                                <input type="checkbox" value="3" class="dept-checkbox">
+                                <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                <span>DSDA</span>
+                            </label>
+                            <label class="dept-multi-option" data-dept-id="4">
+                                <input type="checkbox" value="4" class="dept-checkbox">
+                                <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                <span>AI</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 

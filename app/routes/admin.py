@@ -276,8 +276,13 @@ def subjects_by_dept_year(dept_id, year_id):
 @login_required
 @role_required('admin')
 def subjects_list(dept_id, year_id):
-    subjects = Subject.by_dept_year(dept_id, year_id)
-    return jsonify([{"id": s["id"], "name": s["name"]} for s in subjects])
+    subjects = Subject.by_dept_year_with_dept(dept_id, year_id)
+    return jsonify([
+        {"id": s["id"], "name": s["name"],
+         "dept_id": s["dept_id"], "dept_name": s["dept_name"],
+         "year_id": s["year_id"]}
+        for s in subjects
+    ])
 
 
 # --- Teachers -----------------------------------------------------
@@ -305,7 +310,12 @@ def teachers_add():
     name = request.form.get("name", "").strip()
     phone = request.form.get("phone", "").strip()
     email = (request.form.get("email", "") or "").strip().lower()
-    dept_id = request.form.get("dept_id", "").strip()
+
+    dept_ids = list(
+        dict.fromkeys(
+            d for d in request.form.getlist("dept_ids") if d and d.isdigit()
+        )
+    )
 
     fy_subject_ids = list(
         dict.fromkeys(s for s in request.form.getlist("fy_subject_ids") if s)
@@ -333,9 +343,11 @@ def teachers_add():
         flash("That email is already registered.", "error")
         return redirect(url_for("admin.teachers"))
 
-    if not dept_id.isdigit():
-        flash("Please select a valid department.", "error")
+    if not dept_ids:
+        flash("Please select at least one department.", "error")
         return redirect(url_for("admin.teachers"))
+
+    primary_dept_id = dept_ids[0]
 
     if not 1 <= len(fy_subject_ids) <= 6:
         flash("Please select between 1 and 6 FY subjects.", "error")
@@ -347,13 +359,13 @@ def teachers_add():
         flash("Please select between 1 and 6 TY subjects.", "error")
         return redirect(url_for("admin.teachers"))
 
-    check = _validate_subjects(fy_subject_ids, dept_id, 1, "FY")
+    check = _validate_subjects_multi(fy_subject_ids, dept_ids, 1, "FY")
     if check:
         return check
-    check = _validate_subjects(sy_subject_ids, dept_id, 2, "SY")
+    check = _validate_subjects_multi(sy_subject_ids, dept_ids, 2, "SY")
     if check:
         return check
-    check = _validate_subjects(ty_subject_ids, dept_id, 3, "TY")
+    check = _validate_subjects_multi(ty_subject_ids, dept_ids, 3, "TY")
     if check:
         return check
 
@@ -364,7 +376,7 @@ def teachers_add():
         teacher_id = _insert(
             "INSERT INTO teachers (user_id, name, username, dept_id) "
             "VALUES (%s, %s, %s, %s)",
-            (user_id, name, username, dept_id),
+            (user_id, name, username, primary_dept_id),
         )
 
         assignments = [
@@ -648,6 +660,14 @@ def _validate_subjects(subject_ids, dept_id, year_id, year_name):
     valid = Subject.find_in_dept_year(subject_ids, dept_id, year_id)
     if valid != set(subject_ids):
         flash(f"One or more selected {year_name} subjects are invalid.", "error")
+        return redirect(url_for("admin.teachers"))
+    return None
+
+
+def _validate_subjects_multi(subject_ids, dept_ids, year_id, year_name):
+    valid = Subject.find_in_depts_year(subject_ids, dept_ids, year_id)
+    if valid != set(subject_ids):
+        flash(f"One or more selected {year_name} subjects are invalid for the chosen departments.", "error")
         return redirect(url_for("admin.teachers"))
     return None
 

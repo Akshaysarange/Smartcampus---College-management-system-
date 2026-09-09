@@ -56,10 +56,137 @@ function hideFormError() {
 
 
 /* =========================================================
+   Department Multi-Select
+========================================================= */
+
+var selectedSubjectsByDept = {};
+var activeDeptId = null;
+var deptSubjectsCache = {};
+
+function getSelectedDeptIds() {
+    var checkboxes = document.querySelectorAll(
+        ".dept-checkbox:checked"
+    );
+
+    return Array.from(checkboxes).map(function (cb) {
+        return cb.value;
+    });
+}
+
+function updateDeptTriggerText() {
+    var trigger = document.getElementById(
+        "deptMultiTrigger"
+    );
+
+    if (!trigger) {
+        return;
+    }
+
+    var placeholder = trigger.querySelector(
+        ".dept-multi-placeholder"
+    );
+
+    if (!placeholder) {
+        return;
+    }
+
+    var selectedIds = getSelectedDeptIds();
+
+    if (selectedIds.length === 0) {
+        placeholder.textContent = "Select Departments";
+        placeholder.classList.remove("has-selection");
+    } else {
+        var deptNames = selectedIds.map(function (id) {
+            var label = document.querySelector(
+                '.dept-multi-option[data-dept-id="' +
+                id + '"] span:last-child'
+            );
+            return label ? label.textContent : id;
+        });
+
+        placeholder.textContent = deptNames.join(", ");
+        placeholder.classList.add("has-selection");
+    }
+}
+
+function updateDeptSavedBadges() {
+    var options = document.querySelectorAll(
+        ".dept-multi-option"
+    );
+
+    options.forEach(function (option) {
+        var deptId = option.getAttribute("data-dept-id");
+        var saved = selectedSubjectsByDept[deptId];
+        var existing = option.querySelector(
+            ".dept-saved-badge"
+        );
+
+        if (
+            saved &&
+            (saved.fy.length > 0 ||
+                saved.sy.length > 0 ||
+                saved.ty.length > 0)
+        ) {
+            if (!existing) {
+                var badge = document.createElement("span");
+                badge.className = "dept-saved-badge";
+                badge.textContent = "saved";
+                option.appendChild(badge);
+            }
+        } else if (existing) {
+            existing.remove();
+        }
+    });
+}
+
+function toggleDeptMultiSelect() {
+    var select = document.getElementById(
+        "deptMultiSelect"
+    );
+
+    if (!select) {
+        return;
+    }
+
+    select.classList.toggle("open");
+
+    var trigger = document.getElementById(
+        "deptMultiTrigger"
+    );
+
+    if (trigger) {
+        var isOpen = select.classList.contains("open");
+        trigger.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+    }
+}
+
+function closeDeptMultiSelect() {
+    var select = document.getElementById(
+        "deptMultiSelect"
+    );
+
+    if (select) {
+        select.classList.remove("open");
+
+        var trigger = document.getElementById(
+            "deptMultiTrigger"
+        );
+
+        if (trigger) {
+            trigger.setAttribute("aria-expanded", "false");
+        }
+    }
+}
+
+
+/* =========================================================
    Subject Configuration
 ========================================================= */
 
-const subjectYearConfig = {
+var subjectYearConfig = {
     FY: {
         yearId: 1,
         containerId: "fySubjectsContainer",
@@ -83,13 +210,13 @@ const subjectYearConfig = {
 };
 
 function getYearConfig(year) {
-    const normalizedYear = String(year).toUpperCase();
+    var normalizedYear = String(year).toUpperCase();
 
     return subjectYearConfig[normalizedYear] || null;
 }
 
 function getSubjectContainer(year) {
-    const config = getYearConfig(year);
+    var config = getYearConfig(year);
 
     if (!config) {
         return null;
@@ -99,7 +226,7 @@ function getSubjectContainer(year) {
 }
 
 function getSubjectCounter(year) {
-    const config = getYearConfig(year);
+    var config = getYearConfig(year);
 
     if (!config) {
         return null;
@@ -116,23 +243,21 @@ function getSubjectCounter(year) {
 function showSubjectContainerMessage(
     year,
     message,
-    iconClass = "fa-solid fa-circle-info"
+    iconClass
 ) {
-    const container = getSubjectContainer(year);
+    iconClass = iconClass || "fa-solid fa-circle-info";
+
+    var container = getSubjectContainer(year);
 
     if (!container) {
         return;
     }
 
-    container.innerHTML = `
-        <div class="subject-loading-message">
-            <i class="${escapeHtml(iconClass)}"></i>
-
-            <span>
-                ${escapeHtml(message)}
-            </span>
-        </div>
-    `;
+    container.innerHTML =
+        '<div class="subject-loading-message">' +
+        '<i class="' + escapeHtml(iconClass) + '"></i>' +
+        "<span>" + escapeHtml(message) + "</span>" +
+        "</div>";
 }
 
 function resetSubjectContainer(year, message) {
@@ -157,32 +282,68 @@ function resetAllSubjectContainers(message) {
 ========================================================= */
 
 function getCheckedSubjects(year) {
-    const config = getYearConfig(year);
-    const container = getSubjectContainer(year);
+    var container = getSubjectContainer(year);
 
-    if (!config || !container) {
+    if (!container) {
         return [];
     }
 
     return Array.from(
         container.querySelectorAll(
-            `input[name="${config.inputName}"]:checked`
+            '.subject-checkbox[data-year="' +
+            year +
+            '"]:checked'
         )
     );
 }
 
+function getActiveDeptCheckedCount(year) {
+    return getCheckedSubjects(year).length;
+}
+
+function getAllDeptCheckedCount(year) {
+    var config = getYearConfig(year);
+
+    if (!config) {
+        return 0;
+    }
+
+    var total = 0;
+    var deptIds = Object.keys(selectedSubjectsByDept);
+
+    for (var i = 0; i < deptIds.length; i++) {
+        var saved = selectedSubjectsByDept[deptIds[i]];
+
+        if (saved) {
+            var yearKey = year.toLowerCase();
+
+            if (saved[yearKey]) {
+                total += saved[yearKey].length;
+            }
+        }
+    }
+
+    return total;
+}
+
 function updateSubjectCounter(year) {
-    const counter = getSubjectCounter(year);
+    var counter = getSubjectCounter(year);
 
     if (!counter) {
         return;
     }
 
-    const selectedCount = getCheckedSubjects(year).length;
+    var activeCount = getActiveDeptCheckedCount(year);
+    var totalCount = getAllDeptCheckedCount(year);
 
-    counter.textContent = `${selectedCount}/6 Selected`;
+    if (activeDeptId && totalCount !== activeCount) {
+        counter.textContent =
+            activeCount + "/6 (Total: " + totalCount + ")";
+    } else {
+        counter.textContent = activeCount + "/6 Selected";
+    }
 
-    if (selectedCount >= 1 && selectedCount <= 6) {
+    if (totalCount >= 1 && totalCount <= 6) {
         counter.classList.add("complete");
     } else {
         counter.classList.remove("complete");
@@ -197,12 +358,132 @@ function resetAllSubjectCounters() {
 
 
 /* =========================================================
-   Create Subject Checkboxes
+   Save / Restore Selections Per Department
 ========================================================= */
 
-function createSubjectCheckboxes(year, subjects) {
-    const config = getYearConfig(year);
-    const container = getSubjectContainer(year);
+function saveCurrentDeptSelections() {
+    if (!activeDeptId) {
+        return;
+    }
+
+    var fyChecked = getCheckedSubjects("FY").map(
+        function (cb) {
+            return cb.value;
+        }
+    );
+
+    var syChecked = getCheckedSubjects("SY").map(
+        function (cb) {
+            return cb.value;
+        }
+    );
+
+    var tyChecked = getCheckedSubjects("TY").map(
+        function (cb) {
+            return cb.value;
+        }
+    );
+
+    selectedSubjectsByDept[activeDeptId] = {
+        fy: fyChecked,
+        sy: syChecked,
+        ty: tyChecked
+    };
+
+    updateDeptSavedBadges();
+}
+
+function restoreSelectionsForDept(deptId) {
+    var saved = selectedSubjectsByDept[deptId];
+
+    if (!saved) {
+        return;
+    }
+
+    ["FY", "SY", "TY"].forEach(function (year) {
+        var config = getYearConfig(year);
+
+        if (!config) {
+            return;
+        }
+
+        var yearKey = year.toLowerCase();
+        var ids = saved[yearKey] || [];
+
+        ids.forEach(function (subjectId) {
+            var cb = document.querySelector(
+                '.subject-checkbox[value="' +
+                subjectId +
+                '"][data-year="' +
+                year +
+                '"]'
+            );
+
+            if (cb) {
+                cb.checked = true;
+            }
+        });
+    });
+
+    updateSubjectCounter("FY");
+    updateSubjectCounter("SY");
+    updateSubjectCounter("TY");
+}
+
+
+/* =========================================================
+   Create Subject Checkboxes (Single Dept View)
+========================================================= */
+
+var deptColorMap = {
+    1: {
+        bg: "#ede9fe",
+        text: "#7c3aed",
+        border: "#d8b4fe"
+    },
+    2: {
+        bg: "#dbeafe",
+        text: "#2563eb",
+        border: "#93c5fd"
+    },
+    3: {
+        bg: "#d1fae5",
+        text: "#059669",
+        border: "#6ee7b7"
+    },
+    4: {
+        bg: "#fef3c7",
+        text: "#d97706",
+        border: "#fcd34d"
+    }
+};
+
+function getDeptBadgeStyle(deptId) {
+    var colors = deptColorMap[deptId] || {
+        bg: "#f3f4f6",
+        text: "#6b7280",
+        border: "#d1d5db"
+    };
+
+    return (
+        "background:" +
+        colors.bg +
+        ";color:" +
+        colors.text +
+        ";border:1px solid " +
+        colors.border +
+        ";"
+    );
+}
+
+function renderSubjectsForYear(
+    year,
+    deptId,
+    deptName,
+    subjects
+) {
+    var config = getYearConfig(year);
+    var container = getSubjectContainer(year);
 
     if (!config || !container) {
         return;
@@ -210,10 +491,14 @@ function createSubjectCheckboxes(year, subjects) {
 
     container.innerHTML = "";
 
-    if (!Array.isArray(subjects) || subjects.length === 0) {
+    var filtered = subjects.filter(function (s) {
+        return String(s.year_id) === String(config.yearId);
+    });
+
+    if (filtered.length === 0) {
         showSubjectContainerMessage(
             year,
-            "No subjects found",
+            "No subjects found for this department",
             "fa-solid fa-circle-exclamation"
         );
 
@@ -221,56 +506,84 @@ function createSubjectCheckboxes(year, subjects) {
         return;
     }
 
-    subjects.forEach(function (subject) {
-        const subjectId = String(subject.id);
+    var deptLabel = document.createElement("div");
 
-        const checkboxId =
-            `${year.toLowerCase()}Subject${subjectId}`;
+    deptLabel.className = "subject-dept-label";
+    deptLabel.style.cssText =
+        "display:flex;align-items:center;gap:8px;" +
+        "margin:8px 0 6px;padding:6px 10px;" +
+        "border-radius:6px;font-size:12px;" +
+        "font-weight:600;letter-spacing:0.3px;";
 
-        const checkboxLabel = document.createElement("label");
+    var badgeStyle = getDeptBadgeStyle(
+        parseInt(deptId, 10)
+    );
 
-        checkboxLabel.className = "subject-checkbox-card";
+    deptLabel.innerHTML =
+        '<span style="' +
+        badgeStyle +
+        'padding:2px 8px;border-radius:4px;font-size:11px;">' +
+        escapeHtml(deptName) +
+        "</span>" +
+        '<span style="color:#888;font-weight:500;">' +
+        filtered.length +
+        " subject" +
+        (filtered.length > 1 ? "s" : "") +
+        "</span>";
+
+    container.appendChild(deptLabel);
+
+    filtered.forEach(function (subject) {
+        var subjectId = String(subject.id);
+
+        var checkboxId =
+            year.toLowerCase() + "Subject" + subjectId;
+
+        var checkboxLabel =
+            document.createElement("label");
+
+        checkboxLabel.className =
+            "subject-checkbox-card";
         checkboxLabel.setAttribute("for", checkboxId);
 
-        checkboxLabel.innerHTML = `
-            <input
-                type="checkbox"
-                id="${escapeHtml(checkboxId)}"
-                name="${escapeHtml(config.inputName)}"
-                value="${escapeHtml(subjectId)}"
-                class="subject-checkbox"
-                data-year="${escapeHtml(year)}"
-            >
-
-            <span
-                class="custom-checkbox"
-                aria-hidden="true"
-            >
-                <i class="fa-solid fa-check"></i>
-            </span>
-
-            <span class="subject-checkbox-name">
-                ${escapeHtml(
-                    subject.name || "Unnamed Subject"
-                )}
-            </span>
-        `;
+        checkboxLabel.innerHTML =
+            '<input type="checkbox" ' +
+            'id="' +
+            escapeHtml(checkboxId) +
+            '" ' +
+            'value="' +
+            escapeHtml(subjectId) +
+            '" ' +
+            'class="subject-checkbox" ' +
+            'data-year="' +
+            escapeHtml(year) +
+            '" ' +
+            'data-dept="' +
+            escapeHtml(deptId) +
+            '">' +
+            '<span class="custom-checkbox" aria-hidden="true">' +
+            '<i class="fa-solid fa-check"></i>' +
+            "</span>" +
+            '<span class="subject-checkbox-name">' +
+            escapeHtml(subject.name || "Unnamed Subject") +
+            "</span>";
 
         container.appendChild(checkboxLabel);
     });
 
     attachSubjectCheckboxEvents(year);
+    restoreSelectionsForDept(deptId);
     updateSubjectCounter(year);
 }
 
 function attachSubjectCheckboxEvents(year) {
-    const container = getSubjectContainer(year);
+    var container = getSubjectContainer(year);
 
     if (!container) {
         return;
     }
 
-    const checkboxes = container.querySelectorAll(
+    var checkboxes = container.querySelectorAll(
         ".subject-checkbox"
     );
 
@@ -288,20 +601,22 @@ function attachSubjectCheckboxEvents(year) {
 ========================================================= */
 
 function handleSubjectCheckboxChange(event) {
-    const checkbox = event.target;
-    const year = checkbox.dataset.year;
+    var checkbox = event.target;
+    var year = checkbox.dataset.year;
 
     if (!year) {
         return;
     }
 
-    const selectedSubjects = getCheckedSubjects(year);
+    var selectedSubjects = getCheckedSubjects(year);
 
     if (selectedSubjects.length > 6) {
         checkbox.checked = false;
 
         showFormError(
-            `You can select maximum 6 subjects for ${year}.`
+            "You can select maximum 6 subjects for " +
+            year +
+            " in this department."
         );
 
         updateSubjectCounter(year);
@@ -317,104 +632,209 @@ function handleSubjectCheckboxChange(event) {
    Load Subjects from Backend
 ========================================================= */
 
-async function loadSubjectsByYear(
+async function loadSubjectsByDeptAndYear(
     departmentId,
-    year,
     yearId
 ) {
-    showSubjectContainerMessage(
-        year,
-        "Loading subjects...",
-        "fa-solid fa-spinner fa-spin"
+    var response = await fetch(
+        "/admin/subjects/list/" +
+        encodeURIComponent(departmentId) +
+        "/" +
+        encodeURIComponent(yearId),
+        {
+            method: "GET",
+            headers: {
+                Accept: "application/json"
+            }
+        }
     );
 
-    try {
-        const response = await fetch(
-            `/admin/subjects/list/${encodeURIComponent(
-                departmentId
-            )}/${encodeURIComponent(yearId)}`,
-            {
-                method: "GET",
-                headers: {
-                    Accept: "application/json"
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                `Unable to load ${year} subjects`
-            );
-        }
-
-        const subjects = await response.json();
-
-        if (!Array.isArray(subjects)) {
-            throw new Error(
-                `Invalid ${year} subjects response`
-            );
-        }
-
-        createSubjectCheckboxes(year, subjects);
-
-    } catch (error) {
-        console.error(error);
-
-        showSubjectContainerMessage(
-            year,
-            "Error loading subjects",
-            "fa-solid fa-triangle-exclamation"
-        );
-
-        updateSubjectCounter(year);
-
-        showFormError(
-            `Unable to load ${year} subjects. Please try again.`
+    if (!response.ok) {
+        throw new Error(
+            "Unable to load subjects for dept " +
+            departmentId
         );
     }
+
+    var subjects = await response.json();
+
+    if (!Array.isArray(subjects)) {
+        throw new Error(
+            "Invalid subjects response for dept " +
+            departmentId
+        );
+    }
+
+    return subjects;
 }
 
-async function loadAllSubjects() {
-    const departmentSelect = document.getElementById(
-        "deptSelectAdd"
+async function loadDeptSubjects(deptId) {
+    if (deptSubjectsCache[deptId]) {
+        return deptSubjectsCache[deptId];
+    }
+
+    var fySubjects = await loadSubjectsByDeptAndYear(
+        deptId,
+        subjectYearConfig.FY.yearId
     );
 
-    if (!departmentSelect) {
-        return;
-    }
+    var sySubjects = await loadSubjectsByDeptAndYear(
+        deptId,
+        subjectYearConfig.SY.yearId
+    );
+
+    var tySubjects = await loadSubjectsByDeptAndYear(
+        deptId,
+        subjectYearConfig.TY.yearId
+    );
+
+    var deptLabel = document.querySelector(
+        '.dept-multi-option[data-dept-id="' +
+        deptId +
+        '"] span:last-child'
+    );
+
+    var allSubjects = fySubjects.concat(
+        sySubjects,
+        tySubjects
+    );
+
+    deptSubjectsCache[deptId] = {
+        deptName: deptLabel
+            ? deptLabel.textContent
+            : deptId,
+        subjects: allSubjects
+    };
+
+    return deptSubjectsCache[deptId];
+}
+
+async function handleDeptCheckboxChange(event) {
+    var checkbox = event.target;
+    var deptId = checkbox.value;
 
     hideFormError();
+    updateDeptTriggerText();
 
-    const departmentId = departmentSelect.value;
+    if (checkbox.checked) {
+        saveCurrentDeptSelections();
 
-    if (!departmentId) {
-        resetAllSubjectContainers(
-            "Select Department First"
-        );
+        activeDeptId = deptId;
 
-        resetAllSubjectCounters();
-        return;
+        ["FY", "SY", "TY"].forEach(function (year) {
+            showSubjectContainerMessage(
+                year,
+                "Loading subjects...",
+                "fa-solid fa-spinner fa-spin"
+            );
+        });
+
+        try {
+            var deptData =
+                await loadDeptSubjects(deptId);
+
+            renderSubjectsForYear(
+                "FY",
+                deptId,
+                deptData.deptName,
+                deptData.subjects
+            );
+
+            renderSubjectsForYear(
+                "SY",
+                deptId,
+                deptData.deptName,
+                deptData.subjects
+            );
+
+            renderSubjectsForYear(
+                "TY",
+                deptId,
+                deptData.deptName,
+                deptData.subjects
+            );
+        } catch (error) {
+            console.error(
+                "Error loading dept " + deptId + ":",
+                error
+            );
+
+            resetAllSubjectContainers(
+                "Error loading subjects"
+            );
+
+            showFormError(
+                "Unable to load subjects. Please try again."
+            );
+        }
+    } else {
+        if (activeDeptId === deptId) {
+            saveCurrentDeptSelections();
+
+            activeDeptId = null;
+
+            var remaining = getSelectedDeptIds();
+
+            if (remaining.length > 0) {
+                var lastDept =
+                    remaining[remaining.length - 1];
+
+                activeDeptId = lastDept;
+
+                ["FY", "SY", "TY"].forEach(function (
+                    year
+                ) {
+                    showSubjectContainerMessage(
+                        year,
+                        "Loading subjects...",
+                        "fa-solid fa-spinner fa-spin"
+                    );
+                });
+
+                try {
+                    var deptData2 =
+                        await loadDeptSubjects(lastDept);
+
+                    renderSubjectsForYear(
+                        "FY",
+                        lastDept,
+                        deptData2.deptName,
+                        deptData2.subjects
+                    );
+
+                    renderSubjectsForYear(
+                        "SY",
+                        lastDept,
+                        deptData2.deptName,
+                        deptData2.subjects
+                    );
+
+                    renderSubjectsForYear(
+                        "TY",
+                        lastDept,
+                        deptData2.deptName,
+                        deptData2.subjects
+                    );
+                } catch (err) {
+                    console.error(err);
+
+                    resetAllSubjectContainers(
+                        "Error loading subjects"
+                    );
+                }
+            } else {
+                resetAllSubjectContainers(
+                    "Select Department First"
+                );
+
+                resetAllSubjectCounters();
+            }
+        } else {
+            saveCurrentDeptSelections();
+        }
+
+        updateDeptSavedBadges();
     }
-
-    await Promise.all([
-        loadSubjectsByYear(
-            departmentId,
-            "FY",
-            subjectYearConfig.FY.yearId
-        ),
-
-        loadSubjectsByYear(
-            departmentId,
-            "SY",
-            subjectYearConfig.SY.yearId
-        ),
-
-        loadSubjectsByYear(
-            departmentId,
-            "TY",
-            subjectYearConfig.TY.yearId
-        )
-    ]);
 }
 
 
@@ -423,7 +843,7 @@ async function loadAllSubjects() {
 ========================================================= */
 
 function validateTeacherName() {
-    const teacherName = document.getElementById(
+    var teacherName = document.getElementById(
         "teacherName"
     );
 
@@ -431,7 +851,7 @@ function validateTeacherName() {
         return false;
     }
 
-    const name = teacherName.value.trim();
+    var name = teacherName.value.trim();
 
     if (name.length < 2) {
         showFormError(
@@ -448,7 +868,7 @@ function validateTeacherName() {
 }
 
 function validateTeacherPhone() {
-    const teacherPhone = document.getElementById(
+    var teacherPhone = document.getElementById(
         "teacherPhone"
     );
 
@@ -456,8 +876,8 @@ function validateTeacherPhone() {
         return false;
     }
 
-    const phone = teacherPhone.value.trim();
-    const phonePattern = /^[0-9]{10}$/;
+    var phone = teacherPhone.value.trim();
+    var phonePattern = /^[0-9]{10}$/;
 
     if (!phonePattern.test(phone)) {
         showFormError(
@@ -474,7 +894,7 @@ function validateTeacherPhone() {
 }
 
 function validateTeacherEmail() {
-    const teacherEmail = document.getElementById(
+    var teacherEmail = document.getElementById(
         "teacherEmail"
     );
 
@@ -482,8 +902,8 @@ function validateTeacherEmail() {
         return true;
     }
 
-    const email = teacherEmail.value.trim();
-    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    var email = teacherEmail.value.trim();
+    var emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
     if (email && !emailPattern.test(email)) {
         showFormError(
@@ -500,17 +920,19 @@ function validateTeacherEmail() {
 }
 
 function validateDepartment() {
-    const departmentSelect = document.getElementById(
-        "deptSelectAdd"
-    );
+    var selectedDeptIds = getSelectedDeptIds();
 
-    if (!departmentSelect || !departmentSelect.value) {
+    if (selectedDeptIds.length === 0) {
         showFormError(
-            "Please select a department."
+            "Please select at least one department."
         );
 
-        if (departmentSelect) {
-            departmentSelect.focus();
+        var trigger = document.getElementById(
+            "deptMultiTrigger"
+        );
+
+        if (trigger) {
+            trigger.focus();
         }
 
         return false;
@@ -519,32 +941,41 @@ function validateDepartment() {
     return true;
 }
 
-function validateYearSubjects(year) {
-    const selectedSubjects = getCheckedSubjects(year);
+function validateAllYearSubjects() {
+    var years = ["FY", "SY", "TY"];
 
-    if (selectedSubjects.length === 0) {
-        showFormError(
-            `Please select at least 1 subject for ${year}.`
-        );
+    for (var i = 0; i < years.length; i++) {
+        var year = years[i];
+        var total = getAllDeptCheckedCount(year);
 
-        const container = getSubjectContainer(year);
+        if (total === 0) {
+            showFormError(
+                "Please select at least 1 subject for " +
+                year +
+                "."
+            );
 
-        if (container) {
-            container.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
+            var container = getSubjectContainer(year);
+
+            if (container) {
+                container.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            return false;
         }
 
-        return false;
-    }
+        if (total > 6) {
+            showFormError(
+                "You can select maximum 6 subjects for " +
+                year +
+                " (across all departments)."
+            );
 
-    if (selectedSubjects.length > 6) {
-        showFormError(
-            `You can select maximum 6 subjects for ${year}.`
-        );
-
-        return false;
+            return false;
+        }
     }
 
     return true;
@@ -569,28 +1000,84 @@ function validateTeacherForm() {
         return false;
     }
 
-    if (!validateYearSubjects("FY")) {
-        return false;
-    }
-
-    if (!validateYearSubjects("SY")) {
-        return false;
-    }
-
-    if (!validateYearSubjects("TY")) {
+    if (!validateAllYearSubjects()) {
         return false;
     }
 
     return true;
 }
 
+function injectAllSelectionsAsHiddenInputs() {
+    var form = document.getElementById("addTeacherForm");
+
+    if (!form) {
+        return;
+    }
+
+    var existing = form.querySelectorAll(
+        ".dynamic-subject-input"
+    );
+
+    existing.forEach(function (el) {
+        el.remove();
+    });
+
+    var deptIds = Object.keys(selectedSubjectsByDept);
+
+    deptIds.forEach(function (deptId) {
+        var input = document.createElement("input");
+
+        input.type = "hidden";
+        input.name = "dept_ids";
+        input.value = deptId;
+        input.className = "dynamic-subject-input";
+
+        form.appendChild(input);
+    });
+
+    ["fy", "sy", "ty"].forEach(function (yearKey) {
+        var allIds = [];
+
+        deptIds.forEach(function (deptId) {
+            var saved =
+                selectedSubjectsByDept[deptId];
+
+            if (saved && saved[yearKey]) {
+                allIds = allIds.concat(saved[yearKey]);
+            }
+        });
+
+        var unique = [];
+
+        allIds.forEach(function (id) {
+            if (unique.indexOf(id) === -1) {
+                unique.push(id);
+            }
+        });
+
+        unique.forEach(function (subjectId) {
+            var input =
+                document.createElement("input");
+
+            input.type = "hidden";
+            input.name = yearKey + "_subject_ids";
+            input.value = subjectId;
+            input.className = "dynamic-subject-input";
+
+            form.appendChild(input);
+        });
+    });
+}
+
 function handleTeacherFormSubmit(event) {
+    saveCurrentDeptSelections();
+
     if (!validateTeacherForm()) {
         event.preventDefault();
         return;
     }
 
-    const confirmed = window.confirm(
+    var confirmed = window.confirm(
         "Are you sure you want to add this teacher?"
     );
 
@@ -599,20 +1086,18 @@ function handleTeacherFormSubmit(event) {
         return;
     }
 
-    const submitButton = document.getElementById(
+    injectAllSelectionsAsHiddenInputs();
+
+    var submitButton = document.getElementById(
         "addTeacherButton"
     );
 
     if (submitButton) {
         submitButton.disabled = true;
 
-        submitButton.innerHTML = `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-
-            <span>
-                Adding Teacher...
-            </span>
-        `;
+        submitButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i>' +
+            "<span>Adding Teacher...</span>";
     }
 }
 
@@ -622,7 +1107,7 @@ function handleTeacherFormSubmit(event) {
 ========================================================= */
 
 function restrictPhoneInput(event) {
-    const input = event.target;
+    var input = event.target;
 
     input.value = input.value
         .replace(/\D/g, "")
@@ -636,9 +1121,11 @@ function restrictPhoneInput(event) {
 
 function showTeacherListMessage(
     message,
-    iconClass = ""
+    iconClass
 ) {
-    const content = document.getElementById(
+    iconClass = iconClass || "";
+
+    var content = document.getElementById(
         "teachersListContent"
     );
 
@@ -646,178 +1133,123 @@ function showTeacherListMessage(
         return;
     }
 
-    const icon = iconClass
-        ? `<i class="${escapeHtml(iconClass)}"></i>`
+    var icon = iconClass
+        ? '<i class="' + escapeHtml(iconClass) + '"></i>'
         : "";
 
-    content.innerHTML = `
-        <div class="result-empty">
-            ${icon}
-
-            <p>
-                ${escapeHtml(message)}
-            </p>
-        </div>
-    `;
+    content.innerHTML =
+        '<div class="result-empty">' +
+        icon +
+        "<p>" +
+        escapeHtml(message) +
+        "</p>" +
+        "</div>";
 }
 
-function formatTeacherSubjects(
-    year,
-    subjectText
-) {
-    const subjects =
+function formatTeacherSubjects(year, subjectText) {
+    var subjects =
         subjectText && String(subjectText).trim()
             ? String(subjectText).trim()
             : "Not assigned";
 
-    return `
-        <div class="teacher-subject-year">
-
-            <span class="teacher-year-badge">
-                ${escapeHtml(year)}
-            </span>
-
-            <span class="teacher-subject-text">
-                ${escapeHtml(subjects)}
-            </span>
-
-        </div>
-    `;
+    return (
+        '<div class="teacher-subject-year">' +
+        '<span class="teacher-year-badge">' +
+        escapeHtml(year) +
+        "</span>" +
+        '<span class="teacher-subject-text">' +
+        escapeHtml(subjects) +
+        "</span>" +
+        "</div>"
+    );
 }
 
 function createTeacherTable(teachers) {
-    let rows = "";
+    var rows = "";
 
     teachers.forEach(function (teacher, index) {
-        const teacherId = escapeHtml(teacher.id);
+        var teacherId = escapeHtml(teacher.id);
 
-        const teacherName = escapeHtml(
+        var teacherName = escapeHtml(
             teacher.name || "-"
         );
 
-        const teacherUsername = escapeHtml(
+        var teacherUsername = escapeHtml(
             teacher.username || "-"
         );
 
-        const teacherDepartment = escapeHtml(
+        var teacherDepartment = escapeHtml(
             teacher.department || "Not Assigned"
         );
 
-        const teacherSubjects = `
-            <div class="teacher-subjects-list">
+        var teacherSubjects =
+            '<div class="teacher-subjects-list">' +
+            formatTeacherSubjects(
+                "FY",
+                teacher.fy_subjects
+            ) +
+            formatTeacherSubjects(
+                "SY",
+                teacher.sy_subjects
+            ) +
+            formatTeacherSubjects(
+                "TY",
+                teacher.ty_subjects
+            ) +
+            "</div>";
 
-                ${formatTeacherSubjects(
-                    "FY",
-                    teacher.fy_subjects
-                )}
-
-                ${formatTeacherSubjects(
-                    "SY",
-                    teacher.sy_subjects
-                )}
-
-                ${formatTeacherSubjects(
-                    "TY",
-                    teacher.ty_subjects
-                )}
-
-            </div>
-        `;
-
-        rows += `
-            <tr>
-
-                <td data-label="#">
-                    ${index + 1}
-                </td>
-
-                <td data-label="Name">
-                    ${teacherName}
-                </td>
-
-                <td data-label="Username">
-                    ${teacherUsername}
-                </td>
-
-                <td data-label="Department">
-                    ${teacherDepartment}
-                </td>
-
-                <td data-label="Subjects">
-                    ${teacherSubjects}
-                </td>
-
-                <td data-label="Action">
-
-                    <form
-                        method="POST"
-                        action="/admin/teachers/remove"
-                        class="remove-teacher-form"
-                    >
-
-                        <input
-                            type="hidden"
-                            name="csrf_token"
-                            value="${getCsrfToken()}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="teacher_id"
-                            value="${teacherId}"
-                        >
-
-                        <button
-                            type="submit"
-                            class="remove-btn"
-                        >
-
-                            <i class="fa-solid fa-trash"></i>
-
-                            <span>
-                                Remove
-                            </span>
-
-                        </button>
-
-                    </form>
-
-                </td>
-
-            </tr>
-        `;
+        rows +=
+            "<tr>" +
+            '<td data-label="#">' +
+            (index + 1) +
+            "</td>" +
+            '<td data-label="Name">' +
+            teacherName +
+            "</td>" +
+            '<td data-label="Username">' +
+            teacherUsername +
+            "</td>" +
+            '<td data-label="Department">' +
+            teacherDepartment +
+            "</td>" +
+            '<td data-label="Subjects">' +
+            teacherSubjects +
+            "</td>" +
+            '<td data-label="Action">' +
+            '<form method="POST" action="/admin/teachers/remove" class="remove-teacher-form">' +
+            '<input type="hidden" name="csrf_token" value="' +
+            getCsrfToken() +
+            '">' +
+            '<input type="hidden" name="teacher_id" value="' +
+            teacherId +
+            '">' +
+            '<button type="submit" class="remove-btn">' +
+            '<i class="fa-solid fa-trash"></i>' +
+            "<span>Remove</span>" +
+            "</button>" +
+            "</form>" +
+            "</td>" +
+            "</tr>";
     });
 
-    return `
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Department</th>
-                        <th>Subjects</th>
-                        <th>Action</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-                    ${rows}
-                </tbody>
-
-            </table>
-
-        </div>
-    `;
+    return (
+        '<div class="table-wrap"><table>' +
+        "<thead><tr>" +
+        "<th>#</th>" +
+        "<th>Name</th>" +
+        "<th>Username</th>" +
+        "<th>Department</th>" +
+        "<th>Subjects</th>" +
+        "<th>Action</th>" +
+        "</tr></thead>" +
+        "<tbody>" +
+        rows +
+        "</tbody></table></div>"
+    );
 }
 
 function attachRemoveTeacherEvents() {
-    const removeForms = document.querySelectorAll(
+    var removeForms = document.querySelectorAll(
         ".remove-teacher-form"
     );
 
@@ -825,7 +1257,7 @@ function attachRemoveTeacherEvents() {
         form.addEventListener(
             "submit",
             function (event) {
-                const confirmed = window.confirm(
+                var confirmed = window.confirm(
                     "Are you sure you want to remove this teacher?"
                 );
 
@@ -834,20 +1266,16 @@ function attachRemoveTeacherEvents() {
                     return;
                 }
 
-                const removeButton = form.querySelector(
+                var removeButton = form.querySelector(
                     ".remove-btn"
                 );
 
                 if (removeButton) {
                     removeButton.disabled = true;
 
-                    removeButton.innerHTML = `
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-
-                        <span>
-                            Removing...
-                        </span>
-                    `;
+                    removeButton.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin"></i>' +
+                        "<span>Removing...</span>";
                 }
             }
         );
@@ -859,14 +1287,14 @@ function attachRemoveTeacherEvents() {
    Load Teacher List
 ========================================================= */
 
-let teacherSearchTimer = null;
+var teacherSearchTimer = null;
 
 async function loadTeachers() {
-    const searchInput = document.getElementById(
+    var searchInput = document.getElementById(
         "teacherSearch"
     );
 
-    const content = document.getElementById(
+    var content = document.getElementById(
         "teachersListContent"
     );
 
@@ -874,7 +1302,7 @@ async function loadTeachers() {
         return;
     }
 
-    const keyword = searchInput.value.trim();
+    var keyword = searchInput.value.trim();
 
     if (!keyword) {
         showTeacherListMessage(
@@ -891,8 +1319,9 @@ async function loadTeachers() {
     );
 
     try {
-        const response = await fetch(
-            `/admin/teachers/search/${encodeURIComponent(keyword)}`,
+        var response = await fetch(
+            "/admin/teachers/search/" +
+            encodeURIComponent(keyword),
             {
                 method: "GET",
                 headers: {
@@ -901,7 +1330,7 @@ async function loadTeachers() {
             }
         );
 
-        const data = await response.json();
+        var data = await response.json();
 
         if (!response.ok) {
             throw new Error(
@@ -925,7 +1354,6 @@ async function loadTeachers() {
         content.innerHTML = createTeacherTable(data);
 
         attachRemoveTeacherEvents();
-
     } catch (error) {
         console.error(
             "Teacher search error:",
@@ -959,28 +1387,72 @@ function handleTeacherSearchInput() {
 document.addEventListener(
     "DOMContentLoaded",
     function () {
-        const departmentAdd = document.getElementById(
-            "deptSelectAdd"
+        var deptTrigger = document.getElementById(
+            "deptMultiTrigger"
         );
 
-        const teacherForm = document.getElementById(
+        var deptCheckboxes = document.querySelectorAll(
+            ".dept-checkbox"
+        );
+
+        var teacherForm = document.getElementById(
             "addTeacherForm"
         );
 
-        const teacherPhone = document.getElementById(
+        var teacherPhone = document.getElementById(
             "teacherPhone"
         );
 
-        const teacherSearch = document.getElementById(
+        var teacherSearch = document.getElementById(
             "teacherSearch"
         );
 
-        if (departmentAdd) {
-            departmentAdd.addEventListener(
-                "change",
-                loadAllSubjects
+        if (deptTrigger) {
+            deptTrigger.addEventListener(
+                "click",
+                toggleDeptMultiSelect
+            );
+
+            deptTrigger.addEventListener(
+                "keydown",
+                function (event) {
+                    if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
+                        event.preventDefault();
+                        toggleDeptMultiSelect();
+                    }
+
+                    if (event.key === "Escape") {
+                        closeDeptMultiSelect();
+                    }
+                }
             );
         }
+
+        deptCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener(
+                "change",
+                handleDeptCheckboxChange
+            );
+        });
+
+        document.addEventListener(
+            "click",
+            function (event) {
+                var select = document.getElementById(
+                    "deptMultiSelect"
+                );
+
+                if (
+                    select &&
+                    !select.contains(event.target)
+                ) {
+                    closeDeptMultiSelect();
+                }
+            }
+        );
 
         if (teacherSearch) {
             teacherSearch.addEventListener(
