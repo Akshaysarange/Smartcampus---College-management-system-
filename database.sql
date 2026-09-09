@@ -133,11 +133,24 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'teacher', 'student') NOT NULL,
     first_login TINYINT(1) DEFAULT 1,
-    phone VARCHAR(15) DEFAULT NULL
+    phone VARCHAR(15) DEFAULT NULL,
+    email VARCHAR(100) DEFAULT NULL,
+    UNIQUE KEY unique_email (email)
 );
 
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('admin', 'scrypt:32768:8:1$7hHQS28tSq7i8iiV$16a5804f93a9e1c4605ce0aabc589bc3869b70940b2f1de84adcb19e07153d7cc01f5450470282021f47acbde0f58bf643c7ddfbd0f4ba89d1c35fd0e6e3c879', 'admin', 0, '9876543210');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('admin', 'scrypt:32768:8:1$7hHQS28tSq7i8iiV$16a5804f93a9e1c4605ce0aabc589bc3869b70940b2f1de84adcb19e07153d7cc01f5450470282021f47acbde0f58bf643c7ddfbd0f4ba89d1c35fd0e6e3c879', 'admin', 0, '9876543210', NULL);
+
+-- PASSWORD RESET OTP (for "forgot username/password")
+CREATE TABLE password_reset_otp (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    otp_hash VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
 -- TEACHERS
 CREATE TABLE teachers (
@@ -166,10 +179,10 @@ CREATE TABLE teacher_subjects (
 -- This keeps all 6 subjects of every year assigned.
 
 -- CS TEACHERS
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('1000001@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000001'),
-('1000002@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000002'),
-('1000003@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000003');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('1000001@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000001', 'rajesh.sharma.017121@gmail.com'),
+('1000002@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000002', 'priya.mehta@gmail.com'),
+('1000003@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000003', 'suresh.patel@gmail.com');
 
 INSERT INTO teachers (user_id, name, username, dept_id) VALUES
 (2, 'Rajesh Sharma', '1000001@college.ac.in', 1),
@@ -182,10 +195,10 @@ INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES
 (3,5),(3,6),(3,11),(3,12),(3,17),(3,18);
 
 -- IT TEACHERS
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('1000004@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000004'),
-('1000005@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000005'),
-('1000006@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000006');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('1000004@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000004', 'amit.joshi@gmail.com'),
+('1000005@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000005', 'sunita.rao@gmail.com'),
+('1000006@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000006', 'ravi.kumar@gmail.com');
 
 INSERT INTO teachers (user_id, name, username, dept_id) VALUES
 (5, 'Amit Joshi', '1000004@college.ac.in', 2),
@@ -198,10 +211,10 @@ INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES
 (6,23),(6,24),(6,29),(6,30),(6,35),(6,36);
 
 -- DSDA TEACHERS
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('1000007@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000007'),
-('1000008@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000008'),
-('1000009@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000009');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('1000007@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000007', 'deepak.mishra@gmail.com'),
+('1000008@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000008', 'rekha.pandey@gmail.com'),
+('1000009@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000009', 'sanjay.kulkarni@gmail.com');
 
 INSERT INTO teachers (user_id, name, username, dept_id) VALUES
 (8,  'Deepak Mishra', '1000007@college.ac.in', 3),
@@ -214,10 +227,10 @@ INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES
 (9,41),(9,42),(9,47),(9,48),(9,53),(9,54);
 
 -- AI TEACHERS
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('1000010@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000010'),
-('1000011@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000011'),
-('1000012@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000012');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('1000010@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000010', 'arun.khanna@gmail.com'),
+('1000011@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000011', 'divya.menon@gmail.com'),
+('1000012@college.ac.in', 'scrypt:32768:8:1$AVDVyOAU5TOBBnBt$623834f21b3548c2db78682d946c20f5f720d0d541794eff99dca47f87eb7b7f574371f527e9a263b788ec5c078343f1b4f49ec11f09d4c85c93ba5406ec3b2e', 'teacher', 1, '9000000012', 'kiran.reddy@gmail.com');
 
 INSERT INTO teachers (user_id, name, username, dept_id) VALUES
 (11, 'Arun Khanna', '1000010@college.ac.in', 4),
@@ -245,22 +258,22 @@ CREATE TABLE students (
 );
 
 -- CS STUDENTS (5 per year = 15 total)
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('2000001@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000025'),
-('2000002@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000026'),
-('2000003@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000027'),
-('2000004@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000028'),
-('2000005@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000029'),
-('2000006@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000030'),
-('2000007@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000031'),
-('2000008@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000032'),
-('2000009@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000033'),
-('2000010@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000034'),
-('2000011@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000035'),
-('2000012@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000036'),
-('2000013@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000037'),
-('2000014@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000038'),
-('2000015@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000039');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('2000001@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000025', 'aarav.shah@gmail.com'),
+('2000002@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000026', 'bhavna.jain@gmail.com'),
+('2000003@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000027', 'chirag.patel@gmail.com'),
+('2000004@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000028', 'divya.sharma@gmail.com'),
+('2000005@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000029', 'eshan.mehta@gmail.com'),
+('2000006@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000030', 'fatima.khan@gmail.com'),
+('2000007@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000031', 'gaurav.verma@gmail.com'),
+('2000008@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000032', 'hena.gupta@gmail.com'),
+('2000009@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000033', 'ishaan.rao@gmail.com'),
+('2000010@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000034', 'jyoti.singh@gmail.com'),
+('2000011@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000035', 'kabir.malhotra@gmail.com'),
+('2000012@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000036', 'lavanya.nair@gmail.com'),
+('2000013@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000037', 'manav.tiwari@gmail.com'),
+('2000014@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000038', 'nidhi.desai@gmail.com'),
+('2000015@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000039', 'om.mishra@gmail.com');
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
@@ -283,22 +296,22 @@ INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 (28, 'Om Mishra',     '2000015@college.ac.in', '5', 1, 3);
 
 -- IT STUDENTS (5 per year = 15 total)
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('2000016@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000040'),
-('2000017@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000041'),
-('2000018@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000042'),
-('2000019@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000043'),
-('2000020@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000044'),
-('2000021@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000045'),
-('2000022@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000046'),
-('2000023@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000047'),
-('2000024@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000048'),
-('2000025@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000049'),
-('2000026@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000050'),
-('2000027@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000051'),
-('2000028@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000052'),
-('2000029@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000053'),
-('2000030@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000054');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('2000016@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000040', 'prachi.kulkarni@gmail.com'),
+('2000017@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000041', 'qasim.ansari@gmail.com'),
+('2000018@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000042', 'riya.bansal@gmail.com'),
+('2000019@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000043', 'sahil.saxena@gmail.com'),
+('2000020@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000044', 'tanvi.reddy@gmail.com'),
+('2000021@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000045', 'uday.khanna@gmail.com'),
+('2000022@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000046', 'varsha.menon@gmail.com'),
+('2000023@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000047', 'waqar.hussain@gmail.com'),
+('2000024@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000048', 'xenia.dsouza@gmail.com'),
+('2000025@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000049', 'yash.chauhan@gmail.com'),
+('2000026@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000050', 'zara.iyer@gmail.com'),
+('2000027@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000051', 'arjun.yadav@gmail.com'),
+('2000028@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000052', 'bhumi.bose@gmail.com'),
+('2000029@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000053', 'chetan.joshi@gmail.com'),
+('2000030@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000054', 'disha.pandey@gmail.com');
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
@@ -321,22 +334,22 @@ INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 (43, 'Disha Pandey',    '2000030@college.ac.in', '5', 2, 3);
 
 -- DSDA STUDENTS (5 per year = 15 total)
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('2000031@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000055'),
-('2000032@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000056'),
-('2000033@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000057'),
-('2000034@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000058'),
-('2000035@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000059'),
-('2000036@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000060'),
-('2000037@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000061'),
-('2000038@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000062'),
-('2000039@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000063'),
-('2000040@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000064'),
-('2000041@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000065'),
-('2000042@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000066'),
-('2000043@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000067'),
-('2000044@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000068'),
-('2000045@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000069');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('2000031@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000055', 'ekta.sharma@gmail.com'),
+('2000032@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000056', 'farhan.malik@gmail.com'),
+('2000033@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000057', 'gauri.tiwari@gmail.com'),
+('2000034@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000058', 'harsh.verma@gmail.com'),
+('2000035@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000059', 'isha.patel@gmail.com'),
+('2000036@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000060', 'jay.mehta@gmail.com'),
+('2000037@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000061', 'komal.singh@gmail.com'),
+('2000038@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000062', 'laksh.gupta@gmail.com'),
+('2000039@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000063', 'mahi.rao@gmail.com'),
+('2000040@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000064', 'nikhil.kumar@gmail.com'),
+('2000041@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000065', 'ojas.mehta@gmail.com'),
+('2000042@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000066', 'pooja.rao@gmail.com'),
+('2000043@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000067', 'rahul.verma@gmail.com'),
+('2000044@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000068', 'sneha.joshi@gmail.com'),
+('2000045@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000069', 'tarun.nair@gmail.com');
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
@@ -359,22 +372,22 @@ INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 (58, 'Tarun Nair',   '2000045@college.ac.in', '5', 3, 3);
 
 -- AI STUDENTS (5 per year = 15 total)
-INSERT INTO users (username, password, role, first_login, phone) VALUES
-('2000046@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000070'),
-('2000047@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000071'),
-('2000048@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000072'),
-('2000049@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000073'),
-('2000050@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000074'),
-('2000051@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000075'),
-('2000052@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000076'),
-('2000053@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000077'),
-('2000054@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000078'),
-('2000055@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000079'),
-('2000056@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000080'),
-('2000057@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000081'),
-('2000058@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000082'),
-('2000059@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000083'),
-('2000060@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000084');
+INSERT INTO users (username, password, role, first_login, phone, email) VALUES
+('2000046@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000070', 'uma.sharma@gmail.com'),
+('2000047@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000071', 'varun.patel@gmail.com'),
+('2000048@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000072', 'wini.dsouza@gmail.com'),
+('2000049@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000073', 'xerxes.irani@gmail.com'),
+('2000050@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000074', 'yamini.reddy@gmail.com'),
+('2000051@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000075', 'zaid.khan@gmail.com'),
+('2000052@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000076', 'aisha.menon@gmail.com'),
+('2000053@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000077', 'bharat.kumar@gmail.com'),
+('2000054@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000078', 'chhavi.gupta@gmail.com'),
+('2000055@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000079', 'dhruv.bansal@gmail.com'),
+('2000056@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000080', 'elan.saxena@gmail.com'),
+('2000057@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000081', 'falak.ansari@gmail.com'),
+('2000058@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000082', 'girish.rao@gmail.com'),
+('2000059@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000083', 'hina.tiwari@gmail.com'),
+('2000060@college.ac.in', 'scrypt:32768:8:1$6TSL3PmdS37Q1aBD$08398158fc05549aad8bf5a137814c93ab9b5ea7a0482bbdbcf5054de449c8df6fdb40750e5d85d747cc14aebd5acbdd9f30eb1eb129acd4cd2b238cfae571f7', 'student', 1, '9000000084', 'ishan.verma@gmail.com');
 
 INSERT INTO students (user_id, name, username, roll_no, dept_id, year_id) VALUES
 -- FY
