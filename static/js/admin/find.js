@@ -59,8 +59,8 @@ function liveSearch() {
                 return item.type === "Teacher";
             });
 
-            const showYearRoll = hasStudents;
-            const showSubjects = hasTeachers;
+            const showYearRoll = !hasTeachers && hasStudents;
+            const showSubjects = !hasStudents && hasTeachers;
 
             let headers = `
                             <tr>
