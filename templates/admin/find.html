@@ -11,69 +11,173 @@
 {% endblock %}
 
 {% block main %}
-<div class="page-title">Find Teacher / Student</div>
 
-<section class="card">
-    <div class="card-header">Find</div>
+<div class="find-page">
 
-    <div class="card-body">
-        <div class="find-toolbar">
-            <div class="search-box">
+    <!-- Main Search Card -->
+    <section class="find-card">
+
+        <!-- Card Header -->
+        <div class="find-card-header">
+
+            <div class="header-title">
                 <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                <input
-                    type="search"
-                    id="searchInput"
-                    placeholder="Search student or teacher..."
-                    autocomplete="off"
-                    aria-label="Search student or teacher"
-                >
+                <span>Search &amp; Filters</span>
             </div>
 
-            <div class="find-filters">
-                <div class="filter-field">
-                    <label for="roleFilter">Role</label>
-                    <select id="roleFilter">
-                        <option value="all">All</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="student">Student</option>
-                    </select>
+        </div>
+
+
+        <!-- Card Body -->
+        <div class="find-card-body">
+
+            <div class="find-toolbar">
+
+                <!-- Search -->
+                <div class="search-box">
+
+                    <i class="fa-solid fa-magnifying-glass"
+                       aria-hidden="true"></i>
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search by name, email, subject, department..."
+                        autocomplete="off"
+                        aria-label="Search student or teacher"
+                    >
+
                 </div>
 
-                <div class="filter-field">
-                    <label for="deptFilter">Department</label>
-                    <select id="deptFilter">
-                        <option value="all">All</option>
-                        {% for d in departments %}
-                        <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% endfor %}
-                    </select>
+
+                <!-- Filters -->
+                <div class="find-filters">
+
+                    <!-- Role -->
+                    <div class="filter-field">
+
+                        <label for="roleFilter">ROLE</label>
+
+                        <div class="select-wrapper">
+
+                            <select id="roleFilter">
+                                <option value="all">All</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student</option>
+                            </select>
+
+                            <i class="fa-solid fa-chevron-down"
+                               aria-hidden="true"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Department -->
+                    <div class="filter-field">
+
+                        <label for="deptFilter">DEPARTMENT</label>
+
+                        <div class="select-wrapper">
+
+                            <select id="deptFilter">
+                                <option value="all">All</option>
+
+                                {% for d in departments %}
+                                <option value="{{ d.name }}">
+                                    {{ d.name }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+
+                            <i class="fa-solid fa-chevron-down"
+                               aria-hidden="true"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Year -->
+                    <div class="filter-field">
+
+                        <label for="yearFilter">YEAR</label>
+
+                        <div class="select-wrapper">
+
+                            <select id="yearFilter">
+                                <option value="all">All</option>
+
+                                {% for y in years %}
+                                <option value="{{ y.name }}">
+                                    {{ y.name }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+
+                            <i class="fa-solid fa-chevron-down"
+                               aria-hidden="true"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Reset -->
+                    <button
+                        type="button"
+                        class="clear-filters-btn"
+                        id="clearFiltersBtn"
+                        aria-label="Reset filters"
+                    >
+
+                        <i class="fa-solid fa-rotate-left"
+                           aria-hidden="true"></i>
+
+                        <span>Reset</span>
+
+                    </button>
+
                 </div>
 
-                <div class="filter-field">
-                    <label for="yearFilter">Year</label>
-                    <select id="yearFilter">
-                        <option value="all">All</option>
-                        {% for y in years %}
-                        <option value="{{ y.name }}">{{ y.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <button
-                    type="button"
-                    class="clear-filters-btn"
-                    id="clearFiltersBtn"
-                    aria-label="Reset filters"
-                >
-                    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-                    Reset
-                </button>
             </div>
+
+
+            <!-- Results -->
+            <div id="resultContent"
+                 class="result-content"
+                 aria-live="polite">
+
+                <div class="result-empty">
+
+                    <div class="empty-icon">
+                        <i class="fa-regular fa-address-card"
+                           aria-hidden="true"></i>
+
+                        <span class="empty-search">
+                            <i class="fa-solid fa-magnifying-glass"
+                               aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <h3>Start typing to search...</h3>
+
+                    <p>
+                        Use the search box and filters above to find
+                        teachers or students.
+                    </p>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div id="resultContent" aria-live="polite">
-            <div class="result-empty">Start typing to search...</div>
-        </div>
-    </div>
-</section>
+    </section>
+
+</div>
+
 {% endblock %}
