@@ -13,6 +13,23 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
+function getFilters() {
+    const role = document.getElementById("roleFilter");
+    const dept = document.getElementById("deptFilter");
+    const year = document.getElementById("yearFilter");
+
+    return {
+        role: role ? role.value : "all",
+        dept: dept ? dept.value : "all",
+        year: year ? year.value : "all",
+    };
+}
+
+function filtersActive() {
+    const f = getFilters();
+    return f.role !== "all" || f.dept !== "all" || f.year !== "all";
+}
+
 function liveSearch() {
     const searchInput = document.getElementById("searchInput");
     const result = document.getElementById("resultContent");
@@ -24,7 +41,7 @@ function liveSearch() {
 
     const keyword = searchInput.value.trim();
 
-    if (keyword.length === 0) {
+    if (keyword.length === 0 && !filtersActive()) {
         result.innerHTML =
             '<div class="result-empty">Start typing to search...</div>';
         return;
@@ -33,7 +50,14 @@ function liveSearch() {
     result.innerHTML =
         '<div class="result-empty">Searching...</div>';
 
-    fetch(`/admin/search/${encodeURIComponent(keyword)}`)
+    const filters = getFilters();
+    const params = new URLSearchParams();
+    params.set("keyword", keyword);
+    params.set("role", filters.role);
+    params.set("dept", filters.dept);
+    params.set("year", filters.year);
+
+    fetch(`/admin/search?${params.toString()}`)
         .then(function (response) {
             return response.json().then(function (data) {
                 if (!response.ok) {
@@ -48,7 +72,7 @@ function liveSearch() {
         .then(function (data) {
             if (!Array.isArray(data) || data.length === 0) {
                 result.innerHTML =
-                    '<div class="result-empty">No record found</div>';
+                    '<div class="result-empty">No results found</div>';
                 return;
             }
 
@@ -205,13 +229,77 @@ function liveSearch() {
         });
 }
 
+function updateYearField() {
+    const roleFilter = document.getElementById("roleFilter");
+    const yearFilter = document.getElementById("yearFilter");
+
+    if (!roleFilter || !yearFilter) {
+        return;
+    }
+
+    if (roleFilter.value === "teacher") {
+        yearFilter.value = "all";
+        yearFilter.disabled = true;
+    } else {
+        yearFilter.disabled = false;
+    }
+}
+
+function resetFilters() {
+    const searchInput = document.getElementById("searchInput");
+    const roleFilter = document.getElementById("roleFilter");
+    const deptFilter = document.getElementById("deptFilter");
+    const yearFilter = document.getElementById("yearFilter");
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+    if (roleFilter) {
+        roleFilter.value = "all";
+    }
+    if (deptFilter) {
+        deptFilter.value = "all";
+    }
+    if (yearFilter) {
+        yearFilter.value = "all";
+    }
+
+    updateYearField();
+    liveSearch();
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
+    const roleFilter = document.getElementById("roleFilter");
+    const deptFilter = document.getElementById("deptFilter");
+    const yearFilter = document.getElementById("yearFilter");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
     if (!searchInput) {
         console.error("Search input was not found.");
         return;
     }
 
+    updateYearField();
+
     searchInput.addEventListener("input", liveSearch);
+
+    if (roleFilter) {
+        roleFilter.addEventListener("change", function () {
+            updateYearField();
+            liveSearch();
+        });
+    }
+
+    if (deptFilter) {
+        deptFilter.addEventListener("change", liveSearch);
+    }
+
+    if (yearFilter) {
+        yearFilter.addEventListener("change", liveSearch);
+    }
+
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", resetFilters);
+    }
 });

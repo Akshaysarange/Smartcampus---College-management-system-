@@ -21,7 +21,13 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @login_required
 @role_required('admin')
 def find():
-    return render_template("admin/find.html")
+    departments = _query("SELECT id, name FROM departments ORDER BY id")
+    years = _query("SELECT id, name FROM years ORDER BY id")
+    return render_template(
+        "admin/find.html",
+        departments=departments,
+        years=years,
+    )
 
 
 @admin_bp.route("/find-data/<type_name>/<dept_name>/<year_name>")
@@ -54,50 +60,93 @@ def find_data(type_name, dept_name, year_name):
     )
 
 
+@admin_bp.route("/search")
 @admin_bp.route("/search/<keyword>")
 @login_required
 @role_required('admin')
-def search(keyword):
+def search(keyword=None):
+    if keyword is None:
+        keyword = request.args.get("keyword", "") or ""
+    keyword = keyword.strip()
+    role = (request.args.get("role", "") or "").strip().lower()
+    dept = (request.args.get("dept", "") or "").strip()
+    year = (request.args.get("year", "") or "").strip().upper()
+
+    if role not in ("teacher", "student"):
+        role = "all"
+
+    if dept == "all":
+        dept = ""
+    if year == "all":
+        year = ""
+
+    include_students = role in ("all", "student")
+    include_teachers = role in ("all", "teacher")
+
+    year_selected = year in ("FY", "SY", "TY")
+
+    if year_selected:
+        if role == "all":
+            include_teachers = False
+        else:
+            include_teachers = role == "teacher"
+
     key = f"%{keyword}%"
 
-    student_rows = _query(
-        """
-        SELECT 'Student' AS record_type, st.name, d.name AS department,
-               y.name AS year_name, st.roll_no, st.username, u.phone,
-               '' AS fy_subjects, '' AS sy_subjects,
-               '' AS ty_subjects
-        FROM students st
-        JOIN users u ON u.id = st.user_id
-        JOIN departments d ON d.id = st.dept_id
-        JOIN years y ON y.id = st.year_id
-        WHERE st.name LIKE %s OR st.roll_no LIKE %s
-           OR st.username LIKE %s OR u.phone LIKE %s
-        """,
-        (key, key, key, key),
-    )
+    student_rows = []
+    teacher_rows = []
 
-    teacher_rows = _query(
+    if include_students:
+        student_sql = """
+            SELECT 'Student' AS record_type, st.name, d.name AS department,
+                   y.name AS year_name, st.roll_no, st.username, u.phone,
+                   '' AS fy_subjects, '' AS sy_subjects,
+                   '' AS ty_subjects
+            FROM students st
+            JOIN users u ON u.id = st.user_id
+            JOIN departments d ON d.id = st.dept_id
+            JOIN years y ON y.id = st.year_id
+            WHERE (st.name LIKE %s OR st.roll_no LIKE %s
+                OR st.username LIKE %s OR u.phone LIKE %s)
         """
-        SELECT 'Teacher' AS record_type, t.name, d.name AS department,
-               '-' AS year_name, '-' AS roll_no, t.username, u.phone,
-               GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 1 THEN s.name END
-                   ORDER BY s.name SEPARATOR ', ') AS fy_subjects,
-               GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 2 THEN s.name END
-                   ORDER BY s.name SEPARATOR ', ') AS sy_subjects,
-               GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 3 THEN s.name END
-                   ORDER BY s.name SEPARATOR ', ') AS ty_subjects
-        FROM teachers t
-        JOIN users u ON u.id = t.user_id
-        JOIN departments d ON d.id = t.dept_id
-        LEFT JOIN teacher_subjects ts ON ts.teacher_id = t.id
-        LEFT JOIN subjects s ON s.id = ts.subject_id
-        WHERE t.name LIKE %s OR t.username LIKE %s OR u.phone LIKE %s
-           OR s.name LIKE %s
-        GROUP BY t.id, t.name, d.name, t.username, u.phone
-        ORDER BY t.id
-        """,
-        (key, key, key, key),
-    )
+        student_params = [key, key, key, key]
+
+        if dept:
+            student_sql += " AND d.name = %s"
+            student_params.append(dept)
+
+        if year_selected:
+            student_sql += " AND y.name = %s"
+            student_params.append(year)
+
+        student_rows = _query(student_sql, student_params)
+
+    if include_teachers:
+        teacher_sql = """
+            SELECT 'Teacher' AS record_type, t.name, d.name AS department,
+                   '-' AS year_name, '-' AS roll_no, t.username, u.phone,
+                   GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 1 THEN s.name END
+                       ORDER BY s.name SEPARATOR ', ') AS fy_subjects,
+                   GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 2 THEN s.name END
+                       ORDER BY s.name SEPARATOR ', ') AS sy_subjects,
+                   GROUP_CONCAT(DISTINCT CASE WHEN s.year_id = 3 THEN s.name END
+                       ORDER BY s.name SEPARATOR ', ') AS ty_subjects
+            FROM teachers t
+            JOIN users u ON u.id = t.user_id
+            JOIN departments d ON d.id = t.dept_id
+            LEFT JOIN teacher_subjects ts ON ts.teacher_id = t.id
+            LEFT JOIN subjects s ON s.id = ts.subject_id
+            WHERE (t.name LIKE %s OR t.username LIKE %s OR u.phone LIKE %s
+                OR s.name LIKE %s)
+        """
+        teacher_params = [key, key, key, key]
+
+        if dept:
+            teacher_sql += " AND d.name = %s"
+            teacher_params.append(dept)
+
+        teacher_sql += " GROUP BY t.id, t.name, d.name, t.username, u.phone ORDER BY t.id"
+        teacher_rows = _query(teacher_sql, teacher_params)
 
     result = []
     for row in student_rows + teacher_rows:
