@@ -408,6 +408,48 @@ input {
 }
 
 /* =========================================================
+   Help text
+========================================================= */
+
+.help-text {
+    margin-bottom: 24px;
+
+    color: #666666;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   Inline auth links
+========================================================= */
+
+.auth-links {
+    margin-top: 18px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.auth-links a {
+    color: #1a73e8;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        text-decoration-color 0.2s ease;
+}
+
+.auth-links a:hover {
+    color: #0d47a1;
+
+    text-decoration: underline;
+}
+
+/* =========================================================
    Footer
 ========================================================= */
 

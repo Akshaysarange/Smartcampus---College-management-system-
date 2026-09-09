@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCampus | Verify Code{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="header-logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        />
+    </div>
+    <div class="header-title">
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="login-box">
+        <div class="login-box-header">
+            <h2>Verify Code</h2>
+        </div>
+
+        <div class="login-box-body">
+            {% if error %}
+            <div class="error-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <p class="help-text">
+                Enter the 6-digit code sent to {% if masked_email %}{{ masked_email }}{% else %}your email{% endif %}.
+                It is valid for 10 minutes.
+            </p>
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.forgot_verify') }}"
+                id="verifyForm"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="otp"
+                        name="otp"
+                        placeholder=" "
+                        maxlength="6"
+                        inputmode="numeric"
+                        pattern="[0-9]{6}"
+                        autocomplete="one-time-code"
+                        required
+                    />
+                    <label for="otp">Recovery Code</label>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fa-solid fa-check"></i>
+                    Verify Code
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <a href="{{ url_for('auth.forgot') }}">Resend / use different email</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -24,6 +24,13 @@ class User:
         )
 
     @staticmethod
+    def find_by_email(email):
+        return db.query_one(
+            "SELECT * FROM users WHERE BINARY email = %s",
+            (email,),
+        )
+
+    @staticmethod
     def find_by_id(user_id):
         return db.query_one(
             "SELECT * FROM users WHERE id = %s",
@@ -37,6 +44,13 @@ class User:
             (user_id,),
         )
         return user["phone"] if user else None
+
+    @staticmethod
+    def update_email(user_id, email):
+        return db.execute(
+            "UPDATE users SET email = %s WHERE id = %s",
+            (email, user_id),
+        )
 
     @staticmethod
     def verify_password(stored, provided):
@@ -76,13 +90,13 @@ class User:
         )
 
     @staticmethod
-    def create(username, password, role, phone=None):
+    def create(username, password, role, phone=None, email=None):
         return db.insert_and_get_id(
             """
-            INSERT INTO users (username, password, role, first_login, phone)
-            VALUES (%s, %s, %s, 1, %s)
+            INSERT INTO users (username, password, role, first_login, phone, email)
+            VALUES (%s, %s, %s, 1, %s, %s)
             """,
-            (username, User.make_hash(password), role, phone),
+            (username, User.make_hash(password), role, phone, email),
         )
 
     @staticmethod

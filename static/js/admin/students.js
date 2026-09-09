@@ -258,6 +258,45 @@ function handleStudentSearchInput() {
     );
 }
 
+function validateStudentEmail() {
+    const studentEmail = document.getElementById(
+        "studentEmail"
+    );
+
+    if (!studentEmail) {
+        return true;
+    }
+
+    const email = studentEmail.value.trim();
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+    if (email && !emailPattern.test(email)) {
+        alert("Please enter a valid email address.");
+
+        studentEmail.focus();
+        return false;
+    }
+
+    studentEmail.value = email.toLowerCase();
+
+    return true;
+}
+
+function handleAddStudentSubmit(event) {
+    if (!validateStudentEmail()) {
+        event.preventDefault();
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Are you sure you want to add this student?"
+    );
+
+    if (!confirmed) {
+        event.preventDefault();
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const studentSearch = document.getElementById(
         "studentSearch"
@@ -267,10 +306,21 @@ document.addEventListener("DOMContentLoaded", function () {
         "studentPhone"
     );
 
+    const addStudentForm = document.getElementById(
+        "addStudentForm"
+    );
+
     if (studentSearch) {
         studentSearch.addEventListener(
             "input",
             handleStudentSearchInput
+        );
+    }
+
+    if (addStudentForm) {
+        addStudentForm.addEventListener(
+            "submit",
+            handleAddStudentSubmit
         );
     }
 

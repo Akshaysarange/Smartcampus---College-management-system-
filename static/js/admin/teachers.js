@@ -473,6 +473,32 @@ function validateTeacherPhone() {
     return true;
 }
 
+function validateTeacherEmail() {
+    const teacherEmail = document.getElementById(
+        "teacherEmail"
+    );
+
+    if (!teacherEmail) {
+        return true;
+    }
+
+    const email = teacherEmail.value.trim();
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+    if (email && !emailPattern.test(email)) {
+        showFormError(
+            "Please enter a valid email address."
+        );
+
+        teacherEmail.focus();
+        return false;
+    }
+
+    teacherEmail.value = email.toLowerCase();
+
+    return true;
+}
+
 function validateDepartment() {
     const departmentSelect = document.getElementById(
         "deptSelectAdd"
@@ -532,6 +558,10 @@ function validateTeacherForm() {
     }
 
     if (!validateTeacherPhone()) {
+        return false;
+    }
+
+    if (!validateTeacherEmail()) {
         return false;
     }
 
