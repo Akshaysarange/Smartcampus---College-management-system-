@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCampus | Forgot Username/Password{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <div class="header-logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="SmartCampus Logo"
+            class="header-logo-img"
+        />
+    </div>
+    <div class="header-title">
+        <h1>SmartCampus</h1>
+        <p>College Management System</p>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="login-box">
+        <div class="login-box-header">
+            <h2>Recover Account</h2>
+        </div>
+
+        <div class="login-box-body">
+            {% if error %}
+            <div class="error-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <p class="help-text">
+                Enter your account email. We will send your username and a
+                6-digit recovery code to that address.
+            </p>
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.forgot') }}"
+                id="forgotForm"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="input-group">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder=" "
+                        autocomplete="email"
+                        required
+                    />
+                    <label for="email">Email</label>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Send Code
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <a href="{{ url_for('auth.login') }}">Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

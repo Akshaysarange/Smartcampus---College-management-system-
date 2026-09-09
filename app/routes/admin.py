@@ -1,3 +1,5 @@
+import re
+
 from flask import (
     Blueprint,
     flash,
@@ -253,6 +255,7 @@ def teachers():
 def teachers_add():
     name = request.form.get("name", "").strip()
     phone = request.form.get("phone", "").strip()
+    email = (request.form.get("email", "") or "").strip().lower()
     dept_id = request.form.get("dept_id", "").strip()
 
     fy_subject_ids = list(
@@ -271,6 +274,14 @@ def teachers_add():
 
     if not phone.isdigit() or len(phone) != 10:
         flash("Please enter a valid 10-digit phone number.", "error")
+        return redirect(url_for("admin.teachers"))
+
+    if email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        flash("Please enter a valid email address.", "error")
+        return redirect(url_for("admin.teachers"))
+
+    if email and User.find_by_email(email):
+        flash("That email is already registered.", "error")
         return redirect(url_for("admin.teachers"))
 
     if not dept_id.isdigit():
@@ -300,7 +311,7 @@ def teachers_add():
     username = helpers.next_username("teacher", 1000001)
 
     try:
-        user_id = User.create(username, "teacher", "teacher", phone)
+        user_id = User.create(username, "teacher", "teacher", phone, email or None)
         teacher_id = _insert(
             "INSERT INTO teachers (user_id, name, username, dept_id) "
             "VALUES (%s, %s, %s, %s)",
@@ -427,6 +438,7 @@ def students():
 def students_add():
     name = request.form["name"]
     phone = request.form["phone"]
+    email = (request.form.get("email", "") or "").strip().lower()
     dept_id = request.form["dept_id"]
     year_id = request.form["year_id"]
 
@@ -435,8 +447,16 @@ def students_add():
     next_roll = Student.next_roll(dept_id, year_id)
     roll_no = str(next_roll)
 
+    if email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        flash("Please enter a valid email address.", "error")
+        return redirect(url_for("admin.students"))
+
+    if email and User.find_by_email(email):
+        flash("That email is already registered.", "error")
+        return redirect(url_for("admin.students"))
+
     try:
-        user_id = User.create(username, "student", "student", phone)
+        user_id = User.create(username, "student", "student", phone, email or None)
         Student.create(user_id, name, username, roll_no, dept_id, year_id)
         _commit()
         flash(f"Student added successfully! Username: {username}", "success")
