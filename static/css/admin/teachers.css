@@ -500,6 +500,164 @@ select {
 }
 
 /* =========================================================
+   Department Multi-Select Dropdown
+========================================================= */
+
+.dept-multi-select {
+    position: relative;
+    width: 100%;
+}
+
+.dept-multi-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+
+    background: #f9f5ff;
+    color: #333333;
+
+    border: 2px solid #e9d5ff;
+    border-radius: 10px;
+
+    outline: none;
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.dept-multi-trigger:hover {
+    border-color: #d8b4fe;
+}
+
+.dept-multi-trigger:focus {
+    background: #ffffff;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+.dept-multi-placeholder {
+    color: #aaaaaa;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dept-multi-placeholder.has-selection {
+    color: #333333;
+}
+
+.dept-multi-arrow {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #888888;
+    transition: transform 0.2s ease;
+}
+
+.dept-multi-select.open .dept-multi-arrow {
+    transform: rotate(180deg);
+}
+
+.dept-multi-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 100;
+
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+
+    background: #ffffff;
+    border: 2px solid #e9d5ff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+
+    padding: 6px;
+}
+
+.dept-multi-select.open .dept-multi-dropdown {
+    display: block;
+}
+
+.dept-multi-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.dept-multi-option:hover {
+    background: #f5f0ff;
+}
+
+.dept-multi-option input[type="checkbox"] {
+    display: none;
+}
+
+.dept-multi-option .custom-checkbox {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    background: #f9f5ff;
+    border: 2px solid #d8b4fe;
+    border-radius: 5px;
+
+    font-size: 10px;
+    color: transparent;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.dept-multi-option input[type="checkbox"]:checked + .custom-checkbox {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: #ffffff;
+}
+
+.dept-multi-option span:last-child {
+    font-size: 14px;
+    color: #333333;
+}
+
+.dept-saved-badge {
+    margin-left: auto;
+    padding: 1px 7px;
+
+    background: #ede9fe;
+    color: #7c3aed;
+
+    border-radius: 10px;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+/* =========================================================
    Subject Assignment Heading
 ========================================================= */
 
@@ -718,10 +876,10 @@ select {
     word-break: break-word;
 }
 
-/* Custom Font Awesome tick icon hidden */
+/* Custom Font Awesome tick icon hidden (subject cards only) */
 
-.custom-checkbox,
-.custom-checkbox i {
+.subject-checkbox-card .custom-checkbox,
+.subject-checkbox-card .custom-checkbox i {
     display: none;
 }
 
@@ -748,6 +906,32 @@ select {
 
 .subject-loading-message i {
     color: #7c3aed;
+}
+
+/* =========================================================
+   Subject Department Labels
+========================================================= */
+
+.subject-dept-label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 6px 10px;
+    margin: 8px 0 4px;
+
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.subject-dept-label:first-child {
+    margin-top: 0;
 }
 
 /* =========================================================

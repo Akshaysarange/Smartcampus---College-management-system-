@@ -30,6 +30,37 @@ class Subject:
         return {str(row["id"]) for row in rows}
 
     @staticmethod
+    def find_in_depts_year(subject_ids, dept_ids, year_id):
+        if not subject_ids or not dept_ids:
+            return set()
+        subj_placeholders = ", ".join(["%s"] * len(subject_ids))
+        dept_placeholders = ", ".join(["%s"] * len(dept_ids))
+        rows = db.query(
+            f"""
+            SELECT id
+            FROM subjects
+            WHERE dept_id IN ({dept_placeholders})
+              AND year_id = %s
+              AND id IN ({subj_placeholders})
+            """,
+            dept_ids + [year_id] + subject_ids,
+        )
+        return {str(row["id"]) for row in rows}
+
+    @staticmethod
+    def by_dept_year_with_dept(dept_id, year_id):
+        return db.query(
+            """
+            SELECT s.id, s.name, s.dept_id, s.year_id, d.name AS dept_name
+            FROM subjects s
+            JOIN departments d ON d.id = s.dept_id
+            WHERE s.dept_id = %s AND s.year_id = %s
+            ORDER BY s.id
+            """,
+            (dept_id, year_id),
+        )
+
+    @staticmethod
     def info(subject_id):
         return db.query_one(
             """
