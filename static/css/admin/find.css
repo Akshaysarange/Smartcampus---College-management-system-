@@ -279,16 +279,30 @@ select {
 
 
 /* =========================================================
+   Find Toolbar (Search + Filters)
+========================================================= */
+
+.find-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+/* =========================================================
    Search Box
 ========================================================= */
 
 .search-box {
     position: relative;
 
-    width: 100%;
-    max-width: 520px;
-
-    margin-bottom: 24px;
+    flex: 1 1 300px;
+    max-width: 420px;
+    min-width: 220px;
 }
 
 .search-box i {
@@ -337,6 +351,128 @@ select {
 
 .search-box input:focus {
     background: #ffffff;
+
+    border-color: #7c3aed;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(124, 58, 237, 0.1);
+}
+
+
+/* =========================================================
+   Filters
+========================================================= */
+
+.find-filters {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-left: auto;
+}
+
+.filter-field {
+    min-width: 120px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-field label {
+    color: #888888;
+
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.filter-field select {
+    width: 100%;
+    min-width: 130px;
+    min-height: 46px;
+
+    padding: 10px 14px;
+
+    background: #faf7ff;
+    color: #333333;
+
+    border: 2px solid #e9d5ff;
+    border-radius: 12px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.filter-field select:hover:not(:disabled) {
+    border-color: #d8b4fe;
+}
+
+.filter-field select:focus {
+    border-color: #7c3aed;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(124, 58, 237, 0.1);
+}
+
+.filter-field select:disabled {
+    background: #f3f3f3;
+    color: #aaaaaa;
+
+    border-color: #eeeeee;
+
+    cursor: not-allowed;
+}
+
+.clear-filters-btn {
+    min-height: 46px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 18px;
+
+    background: #ffffff;
+    color: #7c3aed;
+
+    border: 2px solid #e9d5ff;
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.clear-filters-btn:hover {
+    background: #f5f0ff;
+    border-color: #c4b5fd;
+}
+
+.clear-filters-btn:focus {
+    outline: none;
 
     border-color: #7c3aed;
 
@@ -818,6 +954,31 @@ tbody tr:hover {
 
     .search-box {
         max-width: none;
+        flex: 1 1 100%;
+    }
+
+    .find-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 14px;
+
+        margin-bottom: 18px;
+    }
+
+    .find-filters {
+        width: 100%;
+
+        margin-left: 0;
+    }
+
+    .filter-field {
+        flex: 1 1 calc(33% - 12px);
+        min-width: 140px;
+    }
+
+    .clear-filters-btn {
+        flex: 1 1 100%;
     }
 
     .find-section {

@@ -17,15 +17,58 @@
     <div class="card-header">Find</div>
 
     <div class="card-body">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input
-                type="search"
-                id="searchInput"
-                placeholder="Search student or teacher..."
-                autocomplete="off"
-                aria-label="Search student or teacher"
-            >
+        <div class="find-toolbar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search student or teacher..."
+                    autocomplete="off"
+                    aria-label="Search student or teacher"
+                >
+            </div>
+
+            <div class="find-filters">
+                <div class="filter-field">
+                    <label for="roleFilter">Role</label>
+                    <select id="roleFilter">
+                        <option value="all">All</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="deptFilter">Department</label>
+                    <select id="deptFilter">
+                        <option value="all">All</option>
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="yearFilter">Year</label>
+                    <select id="yearFilter">
+                        <option value="all">All</option>
+                        {% for y in years %}
+                        <option value="{{ y.name }}">{{ y.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button
+                    type="button"
+                    class="clear-filters-btn"
+                    id="clearFiltersBtn"
+                    aria-label="Reset filters"
+                >
+                    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                    Reset
+                </button>
+            </div>
         </div>
 
         <div id="resultContent" aria-live="polite">
