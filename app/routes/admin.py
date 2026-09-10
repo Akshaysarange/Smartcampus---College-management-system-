@@ -436,6 +436,193 @@ def teachers_remove():
     return redirect(url_for("admin.teachers"))
 
 
+@admin_bp.route("/teachers/detail/<int:teacher_id>")
+@login_required
+@role_required('admin')
+def teachers_detail(teacher_id):
+    row = _query_one(
+        """
+        SELECT t.id, t.name, t.username, t.dept_id, u.phone, u.email
+        FROM teachers t
+        JOIN users u ON u.id = t.user_id
+        WHERE t.id = %s
+        """,
+        (teacher_id,),
+    )
+    if not row:
+        return jsonify({"error": "Teacher not found"}), 404
+
+    subjects_rows = _query(
+        """
+        SELECT ts.subject_id, s.year_id, s.dept_id
+        FROM teacher_subjects ts
+        JOIN subjects s ON s.id = ts.subject_id
+        WHERE ts.teacher_id = %s
+        ORDER BY s.id
+        """,
+        (teacher_id,),
+    )
+
+    assigned_subject_ids = [str(s["subject_id"]) for s in subjects_rows]
+
+    dept_ids_set = {str(row["dept_id"])}
+    for s in subjects_rows:
+        if s["dept_id"]:
+            dept_ids_set.add(str(s["dept_id"]))
+
+    fy_subject_ids = [
+        str(s["subject_id"]) for s in subjects_rows if s["year_id"] == 1
+    ]
+    sy_subject_ids = [
+        str(s["subject_id"]) for s in subjects_rows if s["year_id"] == 2
+    ]
+    ty_subject_ids = [
+        str(s["subject_id"]) for s in subjects_rows if s["year_id"] == 3
+    ]
+
+    return jsonify(
+        {
+            "id": row["id"],
+            "name": row["name"],
+            "username": row["username"],
+            "phone": row["phone"] or "",
+            "email": row["email"] or "",
+            "primary_dept_id": str(row["dept_id"]),
+            "dept_ids": sorted(list(dept_ids_set)),
+            "subject_ids": assigned_subject_ids,
+            "fy_subject_ids": fy_subject_ids,
+            "sy_subject_ids": sy_subject_ids,
+            "ty_subject_ids": ty_subject_ids,
+        }
+    )
+
+
+@admin_bp.route("/teachers/edit", methods=["POST"])
+@login_required
+@role_required('admin')
+def teachers_edit():
+    is_ajax = (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or request.is_json
+        or request.accept_mimetypes.best == "application/json"
+    )
+
+    teacher_id = request.form.get("teacher_id", "").strip()
+    name = request.form.get("name", "").strip()
+    phone = request.form.get("phone", "").strip()
+    email = (request.form.get("email", "") or "").strip().lower()
+
+    dept_ids = list(
+        dict.fromkeys(
+            d for d in request.form.getlist("dept_ids") if d and d.isdigit()
+        )
+    )
+    fy_subject_ids = list(
+        dict.fromkeys(s for s in request.form.getlist("fy_subject_ids") if s)
+    )
+    sy_subject_ids = list(
+        dict.fromkeys(s for s in request.form.getlist("sy_subject_ids") if s)
+    )
+    ty_subject_ids = list(
+        dict.fromkeys(s for s in request.form.getlist("ty_subject_ids") if s)
+    )
+
+    def _fail(message):
+        if is_ajax:
+            return jsonify({"success": False, "message": message}), 400
+        flash(message, "error")
+        return redirect(url_for("admin.teachers"))
+
+    if not teacher_id or not teacher_id.isdigit():
+        return _fail("Valid Teacher ID is required.")
+
+    teacher = _query_one(
+        "SELECT t.id, t.user_id, t.username FROM teachers t WHERE t.id = %s",
+        (teacher_id,),
+    )
+    if not teacher:
+        return _fail("Teacher not found.")
+
+    user_id = teacher["user_id"]
+
+    if len(name) < 2:
+        return _fail("Please enter a valid teacher name.")
+
+    if not phone.isdigit() or len(phone) != 10:
+        return _fail("Please enter a valid 10-digit phone number.")
+
+    if email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return _fail("Please enter a valid email address.")
+
+    if email:
+        existing_user = User.find_by_email(email)
+        if existing_user and existing_user["id"] != user_id:
+            return _fail("That email is already registered with another account.")
+
+    if not dept_ids:
+        return _fail("Please select at least one department.")
+
+    if not 1 <= len(fy_subject_ids) <= 6:
+        return _fail("Please select between 1 and 6 FY subjects.")
+    if not 1 <= len(sy_subject_ids) <= 6:
+        return _fail("Please select between 1 and 6 SY subjects.")
+    if not 1 <= len(ty_subject_ids) <= 6:
+        return _fail("Please select between 1 and 6 TY subjects.")
+
+    for year_id, year_name, s_ids in [
+        (1, "FY", fy_subject_ids),
+        (2, "SY", sy_subject_ids),
+        (3, "TY", ty_subject_ids),
+    ]:
+        valid = Subject.find_in_depts_year(s_ids, dept_ids, year_id)
+        if valid != set(s_ids):
+            return _fail(
+                f"One or more selected {year_name} subjects are invalid for the chosen departments."
+            )
+
+    primary_dept_id = dept_ids[0]
+
+    try:
+        _execute(
+            "UPDATE teachers SET name = %s, dept_id = %s WHERE id = %s",
+            (name, primary_dept_id, teacher_id),
+        )
+        _execute(
+            "UPDATE users SET phone = %s, email = %s WHERE id = %s",
+            (phone, email or None, user_id),
+        )
+        _execute(
+            "DELETE FROM teacher_subjects WHERE teacher_id = %s",
+            (teacher_id,),
+        )
+        assignments = [
+            (teacher_id, subj)
+            for subj in fy_subject_ids + sy_subject_ids + ty_subject_ids
+        ]
+        _executemany(
+            "INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES (%s, %s)",
+            assignments,
+        )
+        _commit()
+
+        if is_ajax:
+            return jsonify(
+                {
+                    "success": True,
+                    "message": f"Teacher '{name}' updated successfully!",
+                }
+            )
+
+        flash(f"Teacher '{name}' updated successfully!", "success")
+        return redirect(url_for("admin.teachers"))
+
+    except Exception:
+        from app.utils import db
+
+        db.rollback()
+        return _fail("Unable to update teacher. Please try again.")
+
+
 @admin_bp.route("/teachers/list/<dept_name>")
 @login_required
 @role_required('admin')

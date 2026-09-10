@@ -1163,6 +1163,54 @@ tbody tr:hover {
    Remove Button
 ========================================================= */
 
+.teacher-action-btns {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-btn {
+    min-height: 35px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 7px 14px;
+
+    background: #e0e7ff;
+    color: #4338ca;
+
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.edit-btn:hover {
+    transform: translateY(-1px);
+
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.edit-btn:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.65;
+
+    transform: none;
+}
+
 .remove-teacher-form {
     margin: 0;
 }
@@ -1207,6 +1255,225 @@ tbody tr:hover {
     opacity: 0.65;
 
     transform: none;
+}
+
+/* =========================================================
+   Edit Teacher Modal
+========================================================= */
+
+.teacher-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.teacher-modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.teacher-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+}
+
+.teacher-modal-dialog {
+    position: relative;
+    z-index: 10;
+
+    width: 94%;
+    max-width: 840px;
+    max-height: 88vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.3),
+        0 4px 16px rgba(124, 58, 237, 0.15);
+
+    overflow: hidden;
+
+    transform: scale(0.95);
+    transition: transform 0.25s ease;
+}
+
+.teacher-modal.open .teacher-modal-dialog {
+    transform: scale(1);
+}
+
+.teacher-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 24px;
+
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4f46e5
+    );
+    color: #ffffff;
+}
+
+.teacher-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.teacher-modal-close {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+    font-size: 16px;
+
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.teacher-modal-close:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: scale(1.05);
+}
+
+.teacher-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 220px;
+
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.modal-loading[hidden],
+#editModalLoading[hidden] {
+    display: none !important;
+}
+
+.modal-loading i {
+    font-size: 32px;
+    color: #7c3aed;
+}
+
+.edit-teacher-badge-bar {
+    margin-bottom: 20px;
+}
+
+.teacher-username-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 6px 14px;
+
+    background: #f8fafc;
+    color: #475569;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.teacher-username-badge strong {
+    color: #7c3aed;
+    font-weight: 700;
+}
+
+.teacher-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 24px;
+    padding-top: 18px;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+.modal-cancel-btn {
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 20px;
+
+    background: #f1f5f9;
+    color: #475569;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.modal-cancel-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
 }
 
 /* =========================================================
@@ -1555,6 +1822,17 @@ tbody tr:hover {
 
     .teacher-subject-year {
         text-align: left;
+    }
+
+    .teacher-action-btns {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .edit-btn {
+        width: 100%;
     }
 
     .remove-teacher-form {

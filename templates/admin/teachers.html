@@ -217,7 +217,7 @@
 </section>
 
 <section class="card">
-    <div class="card-header">Remove Teacher</div>
+    <div class="card-header">Manage Teachers</div>
 
     <div class="card-body">
         <div class="form-group">
@@ -240,4 +240,197 @@
         </div>
     </div>
 </section>
+
+<!-- Edit Teacher Modal -->
+<div id="editTeacherModal" class="teacher-modal" aria-hidden="true" role="dialog" aria-labelledby="editTeacherModalTitle">
+    <div class="teacher-modal-backdrop" onclick="closeEditTeacherModal()"></div>
+    <div class="teacher-modal-dialog">
+        <div class="teacher-modal-header">
+            <div class="teacher-modal-title" id="editTeacherModalTitle">
+                <i class="fa-solid fa-user-pen"></i>
+                <span>Edit Teacher Details</span>
+            </div>
+            <button type="button" class="teacher-modal-close" onclick="closeEditTeacherModal()" aria-label="Close edit dialog">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="teacher-modal-body">
+            <div id="editModalLoading" class="modal-loading" hidden style="display: none;">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Loading teacher details...</p>
+            </div>
+
+            <form id="editTeacherForm" novalidate>
+                <input type="hidden" id="editTeacherId" name="teacher_id" />
+
+                <div class="edit-teacher-badge-bar">
+                    <span class="teacher-username-badge">
+                        <i class="fa-solid fa-id-badge"></i>
+                        Username: <strong id="editTeacherUsernameDisplay">-</strong>
+                    </span>
+                </div>
+
+                <div class="teacher-basic-grid">
+                    <div class="form-group">
+                        <label for="editTeacherName">Full Name</label>
+                        <input
+                            type="text"
+                            id="editTeacherName"
+                            name="name"
+                            placeholder="Enter teacher name"
+                            autocomplete="name"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTeacherPhone">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="editTeacherPhone"
+                            name="phone"
+                            placeholder="Enter 10-digit phone number"
+                            autocomplete="tel"
+                            inputmode="numeric"
+                            pattern="[0-9]{10}"
+                            minlength="10"
+                            maxlength="10"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTeacherEmail">Email</label>
+                        <input
+                            type="email"
+                            id="editTeacherEmail"
+                            name="email"
+                            placeholder="e.g. name@gmail.com"
+                            autocomplete="email"
+                            maxlength="100"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editDeptMultiSelect">Departments</label>
+                        <div class="dept-multi-select" id="editDeptMultiSelect">
+                            <div class="dept-multi-trigger" id="editDeptMultiTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="dept-multi-placeholder">Select Departments</span>
+                                <i class="fa-solid fa-chevron-down dept-multi-arrow"></i>
+                            </div>
+                            <div class="dept-multi-dropdown" id="editDeptMultiDropdown" role="listbox" aria-multiselectable="true">
+                                <label class="dept-multi-option edit-dept-multi-option" data-dept-id="1">
+                                    <input type="checkbox" value="1" class="edit-dept-checkbox">
+                                    <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                    <span>CS</span>
+                                </label>
+                                <label class="dept-multi-option edit-dept-multi-option" data-dept-id="2">
+                                    <input type="checkbox" value="2" class="edit-dept-checkbox">
+                                    <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                    <span>IT</span>
+                                </label>
+                                <label class="dept-multi-option edit-dept-multi-option" data-dept-id="3">
+                                    <input type="checkbox" value="3" class="edit-dept-checkbox">
+                                    <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                    <span>DSDA</span>
+                                </label>
+                                <label class="dept-multi-option edit-dept-multi-option" data-dept-id="4">
+                                    <input type="checkbox" value="4" class="edit-dept-checkbox">
+                                    <span class="custom-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                                    <span>AI</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subject-assignment-title">
+                    <div>Assign Subjects</div>
+                    <small>Select subjects for each year</small>
+                </div>
+
+                <div class="teacher-subject-grid">
+                    <section class="year-subject-row" aria-labelledby="editFySubjectsHeading">
+                        <div class="year-box">FY</div>
+                        <div class="year-subject-content">
+                            <div class="year-subject-header">
+                                <div>
+                                    <h3 id="editFySubjectsHeading">FY Subjects</h3>
+                                    <p>Select minimum 1 and maximum 6 subjects</p>
+                                </div>
+                                <span class="subject-counter" id="editFySubjectCounter" aria-live="polite">
+                                    0/6 Selected
+                                </span>
+                            </div>
+                            <div class="subject-checkbox-grid" id="editFySubjectsContainer" data-year="FY">
+                                <div class="subject-loading-message">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span>Select Department First</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="year-subject-row" aria-labelledby="editSySubjectsHeading">
+                        <div class="year-box">SY</div>
+                        <div class="year-subject-content">
+                            <div class="year-subject-header">
+                                <div>
+                                    <h3 id="editSySubjectsHeading">SY Subjects</h3>
+                                    <p>Select minimum 1 and maximum 6 subjects</p>
+                                </div>
+                                <span class="subject-counter" id="editSySubjectCounter" aria-live="polite">
+                                    0/6 Selected
+                                </span>
+                            </div>
+                            <div class="subject-checkbox-grid" id="editSySubjectsContainer" data-year="SY">
+                                <div class="subject-loading-message">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span>Select Department First</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="year-subject-row" aria-labelledby="editTySubjectsHeading">
+                        <div class="year-box">TY</div>
+                        <div class="year-subject-content">
+                            <div class="year-subject-header">
+                                <div>
+                                    <h3 id="editTySubjectsHeading">TY Subjects</h3>
+                                    <p>Select minimum 1 and maximum 6 subjects</p>
+                                </div>
+                                <span class="subject-counter" id="editTySubjectCounter" aria-live="polite">
+                                    0/6 Selected
+                                </span>
+                            </div>
+                            <div class="subject-checkbox-grid" id="editTySubjectsContainer" data-year="TY">
+                                <div class="subject-loading-message">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span>Select Department First</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="form-error-message" id="editTeacherFormError" role="alert" aria-live="polite" hidden></div>
+
+                <div class="teacher-modal-footer">
+                    <button type="button" class="modal-cancel-btn" onclick="closeEditTeacherModal()">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Cancel</span>
+                    </button>
+                    <button type="submit" class="action-btn" id="saveTeacherEditButton">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Changes</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
